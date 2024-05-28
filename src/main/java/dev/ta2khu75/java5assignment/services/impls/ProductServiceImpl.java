@@ -3,18 +3,11 @@ package dev.ta2khu75.java5assignment.services.impls;
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.connection.lettuce.observability.RedisObservation;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dev.ta2khu75.java5assignment.enviroments.ContainerEnviroment;
 import dev.ta2khu75.java5assignment.exceptions.NotFoundException;
@@ -34,8 +27,6 @@ import lombok.experimental.FieldDefaults;
 public class ProductServiceImpl implements ProductService {
     ProductRepository repository;
     AzureStorageService azureStorageService;
-    RedisTemplate redisTemplate;
-    ObjectMapper objectMapper;
     RedisService redisService;
 
     @Override
@@ -46,15 +37,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product getProductById(Long id) throws JsonProcessingException, ClassNotFoundException {
         Product productt=redisService.get("product"+id, Product.class);
-        System.out.println(productt+">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        String objectJson = (String) redisTemplate.opsForValue().get("product"+id);
-        if (objectJson != null) {
-            return objectMapper.readValue(objectJson, Product.class);
+        if(productt!=null){
+            return productt;
         }
         String key="product"+id;
         Product product = repository.findById(id).orElseThrow(() -> new NotFoundException("Product not found"));
-        objectJson=objectMapper.writeValueAsString(product);
-        redisTemplate.opsForValue().set(key, objectJson);
+        redisService.save(key, product);
         return product;
     }
 
@@ -85,15 +73,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> getAllProducts() throws JsonMappingException, JsonProcessingException, ClassNotFoundException {
         List<Product> products = (List<Product>) redisService.getList("all_product", Product.class);
-        System.out.println(products);
-        String jsonObject=(String) redisTemplate.opsForValue().get("all_product");
-        if (jsonObject!= null){
-            List<Product> productList = objectMapper.readValue(jsonObject, new TypeReference<List<Product>>() {});
-            return productList;
+        if(products!=null){
+            return products;
         }
         List<Product> productList = repository.findAll();
-        jsonObject=objectMapper.writeValueAsString(productList);
-        redisTemplate.opsForValue().set("all_product", jsonObject);
+        redisService.saveList("all_product", productList);
         return productList;
     }
 

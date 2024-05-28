@@ -36,7 +36,7 @@
                   <!-- Center elements -->
                   <div class="order-lg-last col-lg-5 col-sm-8 col-8">
                     <div class="d-flex float-end">
-                      <a href="/login" class="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center"> <i
+                      <a href="/profile" class="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center"> <i
                           class="fas fa-user-alt m-1 me-md-2"></i>
                         <p class="d-none d-md-block mb-0">Profile</p>
                       </a>
@@ -118,6 +118,9 @@
             </c:when>
             <c:when test="${page.equals('success')}">
               <%@ include file="success.jsp" %>
+            </c:when>
+            <c:when test="${page.equals('order-details')}">
+              <%@ include file="orderDetails.jsp" %>
             </c:when>
             <c:otherwise>
             </c:otherwise>

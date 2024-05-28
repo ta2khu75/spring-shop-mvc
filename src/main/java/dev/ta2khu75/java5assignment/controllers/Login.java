@@ -37,7 +37,7 @@ public class Login {
     }
 
     @PostMapping
-    public String postMethodName(@CookieValue(value = "JSESSIONID", required = false) String sessionId, Model model,
+    public String postMethodName(String sessionId, Model model,
             @Valid @ModelAttribute("user") UserLogin user,
             BindingResult bindingResult) {
         if (!bindingResult.hasErrors()) {

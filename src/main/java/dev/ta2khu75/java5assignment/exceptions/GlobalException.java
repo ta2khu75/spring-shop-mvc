@@ -6,11 +6,21 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
+
 @ControllerAdvice
+@RequiredArgsConstructor
 public class GlobalException {
+    private final HttpSession session;
     @ExceptionHandler(ServletRequestBindingException.class)
     public String handleException(ServletRequestBindingException e) {
         e.printStackTrace();
+        return "redirect:/login";
+    }
+    @ExceptionHandler(UnAuthorizationException.class)
+    public String handleException(UnAuthorizationException e) {
+        session.removeAttribute("user");
         return "redirect:/login";
     }
 

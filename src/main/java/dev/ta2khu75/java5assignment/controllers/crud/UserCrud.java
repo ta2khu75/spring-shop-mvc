@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
+import dev.ta2khu75.java5assignment.exceptions.UnAuthorizationException;
 import dev.ta2khu75.java5assignment.mappers.UserMapper;
 import dev.ta2khu75.java5assignment.models.Role;
 import dev.ta2khu75.java5assignment.models.User;
 import dev.ta2khu75.java5assignment.resps.UserResp;
 import dev.ta2khu75.java5assignment.services.UserService;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -26,18 +26,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 @RequiredArgsConstructor
 @RequestMapping("crud/user")
 public class UserCrud {
-    private final HttpSession session;
     private List<UserResp> users;
     private final UserMapper mapper;
     private final UserService service;
 
     @GetMapping
-    public String getMethodName(@SessionAttribute("user") UserResp userResp,@ModelAttribute("user") UserResp user) {
-        if(userResp.getRole().equals(Role.ADMIN)) {
-            return "crud/user";
-        }
-        session.removeAttribute("user");
-        return "redirect:/login";
+    public String getMethodName(@ModelAttribute("user") UserResp user) {
+        return "crud/user";
     }
 
     @PostMapping
@@ -49,7 +44,7 @@ public class UserCrud {
                 models.addAttribute("message", "Thanh cong");
                 return "redirect:/crud/user";
             } catch (Exception e) {
-                e.printStackTrace(); // TODO: handle exception
+                e.printStackTrace(); 
             }
         }
         models.addAttribute("message", "That bai");
@@ -81,6 +76,13 @@ public class UserCrud {
     public List<UserResp> getUsers() {
         users = service.getAllUsers().stream().map(mapper::toUserResp).toList();
         return users;
+    }
+
+    @ModelAttribute
+    public void getAuthorization(@SessionAttribute("user") UserResp userResp) {
+        if (userResp == null || !userResp.getRole().equals(Role.ADMIN)) {
+            throw new UnAuthorizationException("Access denied");
+        }
     }
 
 }

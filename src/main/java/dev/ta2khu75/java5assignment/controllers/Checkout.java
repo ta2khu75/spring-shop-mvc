@@ -73,6 +73,7 @@ public class Checkout {
         for (Map.Entry<Long, Integer> entry : map.entrySet()) {
             OrderDetails orderDetails = orderDetailsService.createOrderDetails(order, entry.getKey(), entry.getValue());
             Product product = productService.getProductById(entry.getKey());
+            product.setNumberOfSales(product.getNumberOfSales()+orderDetails.getQuantity());
             product.setQuantity(product.getQuantity() - orderDetails.getQuantity());
             if(product.getQuantity()<=0){
                 product.setActive(false);

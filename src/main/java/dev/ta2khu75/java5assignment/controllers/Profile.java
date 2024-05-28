@@ -34,9 +34,9 @@ public class Profile {
     public String getMethodName() {
         return "index";
     }
+
     @PostMapping("")
     public String postMethodName(@ModelAttribute("User") UserResp userResp) {
-        System.out.println(userResp.toString());
         User user = userService.updateUserResp(userResp);
         session.setAttribute("user", mapper.toUserResp(user));
         return "redirect:/profile";
@@ -75,24 +75,20 @@ public class Profile {
     @PostMapping("change-password")
     public String postMethodName(@SessionAttribute("user") UserResp userResp, @RequestParam String oldPassword,
             @RequestParam String password, @RequestParam String confirmPassword) {
-        System.out.println(oldPassword + " " + password + " " + confirmPassword);
         if (oldPassword.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             return "redirect:/profile?error=true";
         }
         User user = userService.getUserById(userResp.getId());
-        if (user != null) {
-            if (user.getPassword().equals(oldPassword)) {
-                if (password.equals(confirmPassword)) {
-                    user.setPassword(BCrypt.withDefaults().hashToString(12, password.toCharArray()));
-                    userService.updateUser(user);
-                    session.removeAttribute("user");
-                }
-            }
+        if (user != null && user.getPassword().equals(oldPassword) && password.equals(confirmPassword)) {
+            user.setPassword(BCrypt.withDefaults().hashToString(12, password.toCharArray()));
+            userService.updateUser(user);
+            session.removeAttribute("user");
         }
         return "redirect:/profile";
     }
+
     @ModelAttribute("page")
-    public String getPage(){
+    public String getPage() {
         return "profile";
-    }    
+    }
 }

@@ -1,7 +1,5 @@
 package dev.ta2khu75.java5assignment.listener;
 
-import org.springframework.stereotype.Component;
-
 import dev.ta2khu75.java5assignment.models.Product;
 import dev.ta2khu75.java5assignment.services.RedisService;
 import jakarta.persistence.PostPersist;
@@ -22,7 +20,6 @@ public class ProductListener {
 
     @PostPersist
     public void postPersist(Product product) {
-        System.out.println("post redistore");
         redisService.clear();
     }
 
@@ -33,7 +30,6 @@ public class ProductListener {
 
     @PostUpdate
     public void postUpdate(Product product) {
-        System.out.println("post redistore");
         redisService.clear();
     }
 
