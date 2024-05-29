@@ -20,7 +20,8 @@ public class ProductListener {
 
     @PostPersist
     public void postPersist(Product product) {
-        redisService.clear();
+        redisService.deleteKey("all_product");
+        redisService.deleteKey("all_product_active");
     }
 
     @PreUpdate
@@ -30,7 +31,9 @@ public class ProductListener {
 
     @PostUpdate
     public void postUpdate(Product product) {
-        redisService.clear();
+        redisService.deleteKey("product"+product.getId());
+        redisService.deleteKey("all_product");
+        redisService.deleteKey("all_product_active");
     }
 
     @PreRemove

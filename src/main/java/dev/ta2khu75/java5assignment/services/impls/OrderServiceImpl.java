@@ -74,4 +74,9 @@ public class OrderServiceImpl implements OrderService {
         return repository.findAll();
     }
 
+    @Override
+    public List<Object[]> getTotalOrderGroupDay() {
+        return repository.findTotalSumGroupedByCreateDate();
+    }
+
 }

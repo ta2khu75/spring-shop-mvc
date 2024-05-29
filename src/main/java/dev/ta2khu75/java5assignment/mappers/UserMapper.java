@@ -10,6 +10,7 @@ import dev.ta2khu75.java5assignment.resps.UserResp;
 
 @Mapper(componentModel = "spring", nullValueMapMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
 public interface UserMapper {
+
     User toUser(UserDto userDto);
     
     UserResp toUserResp(User user);

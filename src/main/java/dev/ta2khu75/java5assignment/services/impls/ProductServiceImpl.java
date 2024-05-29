@@ -57,7 +57,10 @@ public class ProductServiceImpl implements ProductService {
         }
         productExisting.setName(product.getName());
         productExisting.setActive(product.isActive());
+        productExisting.setPrice(product.getPrice());
         productExisting.setDescription(product.getDescription());
+        productExisting.setNumberOfSales(product.getNumberOfSales());
+        productExisting.setQuantity(product.getQuantity());
         productExisting.setCategory(product.getCategory());
         return repository.save(productExisting);
     }
@@ -83,7 +86,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> getProductNameByKeyword(String keyword) {
-        return repository.findByNameContaining(keyword);
+        return repository.findByNameContainingAndActiveTrue(keyword);
     }
 
     @Override
@@ -93,6 +96,17 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> getProductByKeywordAndCategory(String keyword) {
-        return repository.findByNameContainingAndCategoryContaining(keyword, keyword);
+        return repository.findByNameContainingAndCategoryContainingAndActiveTrue(keyword, keyword);
+    }
+
+    @Override
+    public List<Product> getAllProductsActiveTrue() throws JsonProcessingException {
+        List<Product> products = (List<Product>) redisService.getList("all_product_active", Product.class);
+        if(products!=null){
+            return products;
+        }
+        List<Product> productList = repository.findByActiveTrue();
+        redisService.saveList("all_product_active", productList);
+        return productList;
     }
 }

@@ -26,6 +26,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
 @Entity @Data @Table(name = "orders")
@@ -48,10 +49,10 @@ public class Order {
     @NotNull
     @Enumerated(EnumType.STRING)
     PaymentMethod paymentMethod;
-    @ManyToOne
-    @JsonIgnore
+    @ManyToOne 
+    @JsonIgnore 
     User user;
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order") 
     List<OrderDetails> orderDetails;
     @CreatedDate
     @Column(updatable = false,nullable = false)

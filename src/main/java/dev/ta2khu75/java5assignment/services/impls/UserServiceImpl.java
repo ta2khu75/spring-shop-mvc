@@ -24,10 +24,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public User login(String email, String password) {
         User user = repository.findByEmail(email);
-        // if (user != null && passwordEncoder.matches(password, user.getPassword())){ //user.getPassword().equals(password)) {
-        //     return user;
-        // }
-        if(user!=null && BCrypt.verifyer().verify(password.toCharArray(), user.getPassword()).verified) {
+
+        if(user!=null && !user.isLocked() && BCrypt.verifyer().verify(password.toCharArray(), user.getPassword()).verified) {
             return user;
         }
         return null;

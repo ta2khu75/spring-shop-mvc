@@ -17,6 +17,7 @@ public interface ProductService {
     public Product updateProduct(Product product, MultipartFile image) throws IOException;
     public Product createProduct(Product product, MultipartFile image) throws IOException;
     public List<Product> getAllProducts() throws JsonMappingException, JsonProcessingException, ClassNotFoundException;
+    public List<Product> getAllProductsActiveTrue() throws JsonProcessingException;
     public List<Product> getProductNameByKeyword(String keyword);
     public List<Product> getProductByCategory(Category category);
     public List<Product> getProductByKeywordAndCategory(String keyword);

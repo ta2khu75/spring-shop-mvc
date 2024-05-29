@@ -33,4 +33,9 @@ public class OrderDetailsServiceImpl implements OrderDetailsService {
         return repository.findByOrderId(orderId);
     }
 
+    @Override
+    public List<Object[]> countProduct() {
+        return repository.countProduct();
+    }
+
 }

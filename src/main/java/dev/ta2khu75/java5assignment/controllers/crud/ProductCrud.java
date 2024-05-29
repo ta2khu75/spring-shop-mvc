@@ -36,7 +36,7 @@ public class ProductCrud {
 
     @GetMapping
     public String getMethodName(@ModelAttribute Product product) {
-            return "crud/product";
+            return "crud/admin";
     }
 
     @PostMapping
@@ -57,6 +57,8 @@ public class ProductCrud {
                 }
             } else {
                 try {
+                    System.out.println("update");
+                    System.out.println(product.getQuantity());
                     service.updateProduct(product, image);
                     return "redirect:/crud/product";
                 } catch (Exception e) {
@@ -72,7 +74,7 @@ public class ProductCrud {
             throws JsonProcessingException, ClassNotFoundException {
         Product product = service.getProductById(id);
         model.addAttribute("product", product);
-        return "crud/product";
+        return "crud/admin";
 
     }
 
@@ -87,7 +89,8 @@ public class ProductCrud {
             throws IOException, ClassNotFoundException {
         Product product = service.getProductById(id);
         model.addAttribute("product", product);
-        return "productDetails";
+        model.addAttribute("page", "product-details");
+        return "crud/admin";
     }
 
     @ModelAttribute("products")
@@ -105,6 +108,10 @@ public class ProductCrud {
         if (userResp == null || !userResp.getRole().equals(Role.ADMIN)) {
             throw new UnAuthorizationException("Access denied");
         }
+    }
+    @ModelAttribute("page")
+    public String getPage() {
+        return "product";
     }
 
 }

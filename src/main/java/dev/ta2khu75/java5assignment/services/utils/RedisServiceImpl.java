@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dev.ta2khu75.java5assignment.services.RedisService;
@@ -32,7 +31,7 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public <T> List<T> getList(String key, Class<T> c) throws JsonMappingException, JsonProcessingException {
+    public <T> List<T> getList(String key, Class<T> c) throws JsonProcessingException {
         String jsonObjectList = (String) redisTemplate.opsForValue().get(key);
         return jsonObjectList == null ? null
                 : objectMapper.readValue(jsonObjectList, new TypeReference<ArrayList<T>>() {
@@ -50,10 +49,14 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public <T> T get(String key, Class<T> c)
-            throws JsonMappingException, JsonProcessingException, ClassNotFoundException {
+    public <T> T get(String key, Class<T> c) throws JsonProcessingException{
         String jsonObject = (String) redisTemplate.opsForValue().get(key);
         return jsonObject == null ? null : objectMapper.readValue(jsonObject, c);
+    }
+
+    @Override
+    public void deleteKey(String key) {
+        redisTemplate.delete(key);
     }
 
 }

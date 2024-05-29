@@ -16,4 +16,5 @@ public interface OrderService {
     public List<Order> getOrderByUserIdAndStatus(Long userId, Status status);
     public List<Order> getNewOrder(Long userId);
     public List<Order> getOldOrder(Long userId);
+    public List<Object[]> getTotalOrderGroupDay();
 }

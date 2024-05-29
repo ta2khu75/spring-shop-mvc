@@ -34,7 +34,7 @@ public class ProductImageCrud {
     @GetMapping
     public String getMethodName(@PathVariable Long productId, Model model) throws IOException, ClassNotFoundException {
         model.addAttribute("product", productService.getProductById(productId));
-        return TemplateEnviroment.PROUDUCT_IMAGE;
+        return "crud/admin";
     }
 
     @PostMapping
@@ -72,5 +72,9 @@ public class ProductImageCrud {
         if (userResp == null || !userResp.getRole().equals(Role.ADMIN)) {
             throw new UnAuthorizationException("Access denied");
         }
+    }
+    @ModelAttribute("page")
+    public String getPage(){
+        return "product-details";
     }
 }

@@ -30,11 +30,12 @@ public class Index {
     }
 
     @ModelAttribute("products")
-    public List<Product> products() throws JsonMappingException, JsonProcessingException, ClassNotFoundException {
-        return service.getAllProducts();
+    public List<Product> products() throws JsonProcessingException {
+        return service.getAllProductsActiveTrue();
     }
+
     @ModelAttribute("page")
-    public String getPage(){
+    public String getPage() {
         return "home";
     }
 

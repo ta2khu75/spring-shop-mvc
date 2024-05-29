@@ -15,7 +15,6 @@ import dev.ta2khu75.java5assignment.models.Role;
 import dev.ta2khu75.java5assignment.models.Status;
 import dev.ta2khu75.java5assignment.resps.UserResp;
 import dev.ta2khu75.java5assignment.services.OrderService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 @RequiredArgsConstructor
 public class OrderCrud {
     private final OrderService service;
-    private final HttpSession session;
 
     @PostMapping
     public String postMethodName(@ModelAttribute Order order) {
@@ -39,7 +37,7 @@ public class OrderCrud {
 
     @GetMapping
     public String getMethodName(@ModelAttribute Order order) {
-        return "crud/order";
+        return "crud/admin";
     }
 
     @ModelAttribute("orders")
@@ -60,7 +58,7 @@ public class OrderCrud {
     @GetMapping("edit")
     public String getMethodName(@RequestParam Long id, Model model) {
         model.addAttribute("order", service.getOrderById(id));
-        return "crud/order";
+        return "crud/admin";
     }
 
     @GetMapping("delete")
@@ -76,4 +74,8 @@ public class OrderCrud {
         }
     }
 
+    @ModelAttribute("page")
+    public String getPage() {
+        return "order";
+    }
 }

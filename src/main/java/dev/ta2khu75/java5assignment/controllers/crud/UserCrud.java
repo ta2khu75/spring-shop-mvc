@@ -32,7 +32,7 @@ public class UserCrud {
 
     @GetMapping
     public String getMethodName(@ModelAttribute("user") UserResp user) {
-        return "crud/user";
+        return "crud/admin";
     }
 
     @PostMapping
@@ -64,7 +64,7 @@ public class UserCrud {
             UserResp userResp = mapper.toUserResp(userExisting);
             model.addAttribute("user", userResp);
         }
-        return "crud/user";
+        return "crud/admin";
     }
 
     @ModelAttribute("roles")
@@ -83,6 +83,10 @@ public class UserCrud {
         if (userResp == null || !userResp.getRole().equals(Role.ADMIN)) {
             throw new UnAuthorizationException("Access denied");
         }
+    }
+    @ModelAttribute("page")
+    public String getPage() {
+        return "user";
     }
 
 }
