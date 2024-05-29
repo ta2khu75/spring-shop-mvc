@@ -3,6 +3,9 @@ package dev.ta2khu75.java5assignment.services.impls;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,14 +36,14 @@ public class ProductServiceImpl implements ProductService {
     public void deleteProduct(Long id) {
         repository.deleteById(id);
     }
-    
+
     @Override
     public Product getProductById(Long id) throws JsonProcessingException, ClassNotFoundException {
-        Product productt=redisService.get("product"+id, Product.class);
-        if(productt!=null){
+        Product productt = redisService.get("product" + id, Product.class);
+        if (productt != null) {
             return productt;
         }
-        String key="product"+id;
+        String key = "product" + id;
         Product product = repository.findById(id).orElseThrow(() -> new NotFoundException("Product not found"));
         redisService.save(key, product);
         return product;
@@ -74,24 +77,26 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getAllProducts() throws JsonMappingException, JsonProcessingException, ClassNotFoundException {
-        List<Product> products = (List<Product>) redisService.getList("all_product", Product.class);
-        if(products!=null){
+    public Page<Product> getAllProducts(Pageable pageable) throws JsonProcessingException{
+        int page=pageable.getPageNumber();
+        int size = pageable.getPageSize();
+        Page<Product> products = null;//(Page<Product>) redisService.getPage(String.format("all_product_size%d_page%d",size,page), Product.class);
+        if (products != null) {
             return products;
         }
-        List<Product> productList = repository.findAll();
-        redisService.saveList("all_product", productList);
+        Page<Product> productList = repository.findAll(pageable);
+        redisService.savePage(String.format("all_product_size%d_page%d",size,page), productList);
         return productList;
     }
 
     @Override
-    public List<Product> getProductNameByKeyword(String keyword) {
-        return repository.findByNameContainingAndActiveTrue(keyword);
+    public Page<Product> getProductNameByKeyword(Pageable pageable, String keyword) {
+        return repository.findByNameContainingAndActiveTrue(keyword, pageable);
     }
 
     @Override
-    public List<Product> getProductByCategory(Category category) {
-        return repository.findByCategory(category);
+    public Page<Product> getProductByCategory(Pageable pageable, Category category) {
+        return repository.findByCategory(pageable, category);
     }
 
     @Override
@@ -100,13 +105,17 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getAllProductsActiveTrue() throws JsonProcessingException {
-        List<Product> products = (List<Product>) redisService.getList("all_product_active", Product.class);
-        if(products!=null){
+    public Page<Product> getAllProductsActiveTrue(Pageable pageable) throws JsonProcessingException {
+        int page = pageable.getPageNumber();
+        int size = pageable.getPageSize();
+
+        Page<Product> products = (Page<Product>) redisService
+                .getPage(String.format("product_page%d_size%d", page, size), Product.class);
+        if (products != null) {
             return products;
         }
-        List<Product> productList = repository.findByActiveTrue();
-        redisService.saveList("all_product_active", productList);
+        Page<Product> productList = repository.findByActiveTrue(pageable);
+        redisService.savePage(String.format("product_%d_%d", page, size), productList);
         return productList;
     }
 }

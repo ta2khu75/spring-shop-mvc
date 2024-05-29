@@ -2,7 +2,11 @@ package dev.ta2khu75.java5assignment.controllers.crud;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,10 +37,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 @RequiredArgsConstructor
 public class ProductCrud {
     private final ProductService service;
+    private final int SIZE = 10;
 
     @GetMapping
     public String getMethodName(@ModelAttribute Product product) {
-            return "crud/admin";
+        return "crud/admin";
     }
 
     @PostMapping
@@ -91,11 +96,14 @@ public class ProductCrud {
         model.addAttribute("product", product);
         model.addAttribute("page", "product-details");
         return "crud/admin";
-    }
+    }   
 
     @ModelAttribute("products")
-    public List<Product> getProducts() throws JsonMappingException, JsonProcessingException, ClassNotFoundException {
-        return service.getAllProducts();
+    public Page<Product> getProducts(@RequestParam(required = false) Optional<Integer> pages, Model model)
+            throws JsonProcessingException {
+        model.addAttribute("pages", pages.orElse(null));
+        Pageable pageable = PageRequest.of(pages.orElse(0), SIZE);
+        return service.getAllProducts(pageable);
     }
 
     @ModelAttribute("categories")
@@ -109,6 +117,7 @@ public class ProductCrud {
             throw new UnAuthorizationException("Access denied");
         }
     }
+
     @ModelAttribute("page")
     public String getPage() {
         return "product";

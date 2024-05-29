@@ -1,13 +1,17 @@
 package dev.ta2khu75.java5assignment.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import dev.ta2khu75.java5assignment.models.Category;
 import dev.ta2khu75.java5assignment.models.Product;
@@ -18,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class Index {
     private final ProductService service;
+    private final int SIZE=4;
 
     @RequestMapping
     public String requestMethodName() {
@@ -30,8 +35,9 @@ public class Index {
     }
 
     @ModelAttribute("products")
-    public List<Product> products() throws JsonProcessingException {
-        return service.getAllProductsActiveTrue();
+    public Page<Product> products(@RequestParam(required = false) Optional<Integer> page) throws JsonProcessingException {
+        Pageable pageable= PageRequest.of(page.orElse(0), SIZE);
+        return service.getAllProductsActiveTrue(pageable);
     }
 
     @ModelAttribute("page")

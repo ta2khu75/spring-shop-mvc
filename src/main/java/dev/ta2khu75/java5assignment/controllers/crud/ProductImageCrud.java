@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
-import dev.ta2khu75.java5assignment.enviroments.TemplateEnviroment;
 import dev.ta2khu75.java5assignment.exceptions.UnAuthorizationException;
 import dev.ta2khu75.java5assignment.models.ProductImage;
 import dev.ta2khu75.java5assignment.models.Role;

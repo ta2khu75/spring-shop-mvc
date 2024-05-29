@@ -55,7 +55,7 @@
       </tr>
     </thead>
     <tbody>
-      <c:forEach items="${orders}" var="order">
+      <c:forEach items="${orders.content}" var="order">
         <tr>
           <td>${order.id}</td>
           <td>${order.address}</td>
@@ -69,6 +69,9 @@
           <td>
             <!-- Edit button -->
             <form:form action="/crud/order/edit" method="get" style="display: inline">
+              <c:if test="${pages!=null}">
+                <input type="hidden" name="pages" value="${pages}" />
+              </c:if>
               <input type="hidden" name="id" value="${order.id}" />
               <button type="submit" class="btn btn-warning btn-sm">
                 Edit
@@ -77,6 +80,9 @@
 
             <!-- Delete button -->
             <form:form action="/crud/order/delete" method="get" style="display: inline">
+              <c:if test="${page!=null}">
+                <input type="hidden" name="pages" value="${pages}" />
+              </c:if>
               <input type="hidden" name="_method" value="delete" />
               <input type="hidden" name="id" value="${order.id}" />
               <button type="submit" class="btn btn-danger btn-sm"
@@ -89,4 +95,21 @@
       </c:forEach>
     </tbody>
   </table>
+  <ul class="pagination">
+    <li class="page-item">
+      <a class="page-link" href="/crud/order" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    <c:forEach var="page" begin="0" end="${orders.totalPages-1}">
+      <li class="page-item"><a class="page-link ${products.number==page?'active':''}"
+          href="/crud/order?pages=${page}">${page+1}</a>
+      </li>
+    </c:forEach>
+    <li class="page-item">
+      <a class="page-link" href="/crud/order?pages=${orders.totalPages-1}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  </ul>
 </div>

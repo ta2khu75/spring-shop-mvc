@@ -72,26 +72,26 @@
                             <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
                                 <div class="position-sticky">
                                     <div class="list-group list-group-flush mx-3 mt-4">
-                                        <a href="/admin" class="list-group-item list-group-item-action py-2"
+                                        <a href="/admin" class="list-group-item list-group-item-action py-2 ${page.equals('dashboard')?'active':''}"
                                             data-mdb-ripple-init aria-current="true">
                                             <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Main dashboard</span>
                                         </a>
                                         <a href="/admin/traffic"
-                                            class="list-group-item list-group-item-action py-2 active"
+                                            class="list-group-item list-group-item-action py-2 ${page.equals('traffic')?'active':''}"
                                             data-mdb-ripple-init>
                                             <i class="fas fa-chart-area fa-fw me-3"></i><span>Website traffic </span>
                                         </a>
-                                        <a href="/admin/seo" class="list-group-item list-group-item-action py-2"
+                                        <a href="/admin/seo" class="list-group-item list-group-item-action py-2 ${page.equals('seo')?'active':''}"
                                             data-mdb-ripple-init>
                                             <i class="fas fa-chart-pie fa-fw me-3"></i><span>SEO</span>
                                         </a>
-                                        <a href="/crud/order" class="list-group-item list-group-item-action py-2"
+                                        <a href="/crud/order" class="list-group-item list-group-item-action py-2 ${page.equals('order')?'active':''}"
                                             data-mdb-ripple-init><i
                                                 class="fas fa-chart-bar fa-fw me-3"></i><span>Orders</span></a>
-                                        <a href="/crud/product" class="list-group-item list-group-item-action py-2"
+                                        <a href="/crud/product" class="list-group-item list-group-item-action py-2 ${page.equals('product')?'active':''}"
                                             data-mdb-ripple-init><i
                                                 class="fas fa-calendar fa-fw me-3"></i><span>Products</span></a>
-                                        <a href="/crud/user" class="list-group-item list-group-item-action py-2"
+                                        <a href="/crud/user" class="list-group-item list-group-item-action py-2 ${page.equals('user')?'active':''}"
                                             data-mdb-ripple-init><i
                                                 class="fas fa-users fa-fw me-3"></i><span>Users</span></a>
                                     </div>

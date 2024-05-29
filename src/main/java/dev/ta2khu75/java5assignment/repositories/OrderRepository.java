@@ -12,40 +12,20 @@ import dev.ta2khu75.java5assignment.models.Order;
 import dev.ta2khu75.java5assignment.models.Status;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    List<Order> findByUserId(Long userId);
+        List<Order> findByUserId(Long userId);
 
-    Optional<Order> findTopByUserIdOrderByIdDesc(Long id);
+        Optional<Order> findTopByUserIdOrderByIdDesc(Long id);
 
-    List<Order> findByUserIdAndStatus(Long userId, Status status);
+        List<Order> findByUserIdAndStatus(Long userId, Status status);
 
-    @Query("SELECT o FROM Order o WHERE o.user.id = :userId AND o.status IN :statuses")
-    List<Order> findByUserIdAndStatuses(@Param("userId") Long userId, @Param("statuses") List<Status> statuses);
+        @Query("SELECT o FROM Order o WHERE o.user.id = :userId AND o.status IN :statuses")
+        List<Order> findByUserIdAndStatuses(@Param("userId") Long userId, @Param("statuses") List<Status> statuses);
 
-    @Query("SELECT YEAR(o.createDate) ,MONTH(o.createDate) ,DAY(o.createDate) ,SUM(o.total) FROM Order o " +
-            "GROUP BY YEAR(o.createDate), MONTH(o.createDate), DAY(o.createDate)")
-    List<Object[]> findTotalSumGroupedByCreateDate();
-    // @Query("SELECT o.orderDetails Count(o.), FROM Order o " +
-    //         "GROUP BY o.orderDetails")
-    // @Query("SELECT o.createDate, SUM(o.total) FROM Order o GROUP BY
-    // o.createDate")
-    // List<Object[]> findTotalSumGroupedByCreateDate();
-    // @Query("SELECT FUNCTION('DATE', o.createDate) AS date, SUM(o.total) AS
-    // totalSum " +
-    // "FROM Order o " +
-    // "GROUP BY FUNCTION('DATE', o.createDate)")
-    // List<Object[]> findTotalSumGroupedByDate();
-    // @Query("SELECT o.createDate, Sum(o.total) FROM Order o GROUP BY
-    // YEAR(o.createDate), MONTH(o.createDate), Date(o.createDate)")
-    // List<Object[]> findTotalSumGroupedByCreateDate();
-    // @Query("SELECT o.createDate AS createDate, SUM(o.total) AS totalSum FROM
-    // Order o GROUP BY o.createDate")
-    // @Query("SELECT NEW
-    // dev.ta2khu75.java5assignment.models.TotalByDate(o.createDate, SUM(o.total))
-    // FROM Order o GROUP BY o.createDate")
-    // List<TotalByDate> findTotalSumGroupedByCreateDate();
-    // List<TotalByDate> findTotalSumGroupedByCreateDate();
+        @Query("SELECT YEAR(o.createDate) ,MONTH(o.createDate) ,DAY(o.createDate) ,SUM(o.total) FROM Order o " +
+                        "GROUP BY YEAR(o.createDate), MONTH(o.createDate), DAY(o.createDate)")
+        List<Object[]> findTotalSumGroupedByCreateDate();
 
-    @Query("SELECT o.createDate, SUM(o.total) FROM Order o WHERE o.createDate BETWEEN :startDate AND :endDate GROUP BY o.createDate")
-    List<Object[]> findTotalSumGroupedByCreateDateBetween(@Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate);
+        @Query("SELECT o.createDate, SUM(o.total) FROM Order o WHERE o.createDate BETWEEN :startDate AND :endDate GROUP BY o.createDate")
+        List<Object[]> findTotalSumGroupedByCreateDateBetween(@Param("startDate") LocalDateTime startDate,
+                        @Param("endDate") LocalDateTime endDate);
 }

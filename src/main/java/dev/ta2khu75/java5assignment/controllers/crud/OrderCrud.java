@@ -1,7 +1,11 @@
 package dev.ta2khu75.java5assignment.controllers.crud;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -25,6 +29,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 @RequiredArgsConstructor
 public class OrderCrud {
     private final OrderService service;
+    private final int SIZE=10;
 
     @PostMapping
     public String postMethodName(@ModelAttribute Order order) {
@@ -41,8 +46,10 @@ public class OrderCrud {
     }
 
     @ModelAttribute("orders")
-    public List<Order> getOrders() {
-        return service.getAllOrders();
+    public Page<Order> getOrders(@RequestParam(required = false) Optional<Integer> pages, Model model){
+        model.addAttribute("pages", pages.orElse(null));
+        Pageable pageable = PageRequest.of(pages.orElse(0), SIZE);
+        return service.getAllOrders(pageable);
     }
 
     @ModelAttribute("paymentMethods")

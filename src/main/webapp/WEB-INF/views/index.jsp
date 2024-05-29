@@ -70,10 +70,13 @@
 
                   <!-- Right elements -->
                   <div class="col-lg-5 col-md-12 col-12">
-                    <form class="input-group float-center" action="/list-product" method="post">
+                    <form class="input-group float-center" action="/list-product" method="get">
+                      <input type="text" name="type" hidden value="keyword">
                       <div class="form-outline">
-                        <input type="search" id="form1" name="keyword" class="form-control" />
-                        <label class="form-label" for="form1">Search</label>
+                        <input type="search" id="form1" name="keyword" value="${keyword}" class="form-control" />
+                        <c:if test="${keyword==null}">
+                          <label class="form-label" for="form1">Search</label>
+                        </c:if>
                       </div>
                       <button type="submit" class="btn btn-primary shadow-0">
                         <i class="fas fa-search"></i>
@@ -126,7 +129,6 @@
             </c:otherwise>
           </c:choose>
           <!--  intro  -->
-
           <!-- Footer -->
           <footer class="text-center text-lg-start text-muted bg-primary mt-3">
             <!-- Section: Links  -->

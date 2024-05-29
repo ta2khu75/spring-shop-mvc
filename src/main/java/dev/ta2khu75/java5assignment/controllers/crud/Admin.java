@@ -5,10 +5,15 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import dev.ta2khu75.java5assignment.exceptions.UnAuthorizationException;
+import dev.ta2khu75.java5assignment.models.Role;
+import dev.ta2khu75.java5assignment.resps.UserResp;
 import dev.ta2khu75.java5assignment.services.OrderDetailsService;
 import dev.ta2khu75.java5assignment.services.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +27,7 @@ public class Admin {
 
     @GetMapping("admin")
     public String getMethodName(Model model) {
-
+        model.addAttribute("page", "dashboard");
         return "crud/admin";
     }
 
@@ -40,6 +45,12 @@ public class Admin {
         model.addAttribute("data", objectMapper.writeValueAsString(list));
         model.addAttribute("page", "seo");
         return "crud/admin";
+    }
+    @ModelAttribute
+    public void getAuthorization(@SessionAttribute("user") UserResp userResp) {
+        if (userResp == null || !userResp.getRole().equals(Role.ADMIN)) {
+            throw new UnAuthorizationException("Access denied");
+        }
     }
 
 }

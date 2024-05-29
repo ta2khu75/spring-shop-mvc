@@ -3,6 +3,7 @@ package dev.ta2khu75.java5assignment.services.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +58,18 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public void deleteKey(String key) {
         redisTemplate.delete(key);
+    }
+
+    @Override
+    public <T> void savePage(String key, Page<T> value) throws JsonProcessingException {
+        String jsonObjectPage=objectMapper.writeValueAsString(value);
+        redisTemplate.opsForValue().set(key, jsonObjectPage);
+    }
+
+    @Override
+    public <T> Page<T> getPage(String key, Class<T> c) throws JsonProcessingException {
+        String jsonObjectPage= (String) redisTemplate.opsForValue().get(key);
+        return jsonObjectPage==null?null:objectMapper.readValue(jsonObjectPage, new TypeReference<Page<T>>(){});
     }
 
 }

@@ -2,6 +2,9 @@ package dev.ta2khu75.java5assignment.services.impls;
 
 import java.util.List;
 import at.favre.lib.crypto.bcrypt.BCrypt;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 // import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,8 +34,8 @@ public class UserServiceImpl implements UserService {
         return null;
     }
     @Override
-    public List<User> getAllUsers() {
-        return repository.findAll();
+    public Page<User> getAllUsers(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     @Override

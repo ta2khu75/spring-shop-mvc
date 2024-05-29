@@ -1,7 +1,12 @@
 package dev.ta2khu75.java5assignment.controllers.crud;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -9,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import dev.ta2khu75.java5assignment.exceptions.UnAuthorizationException;
@@ -26,9 +32,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 @RequiredArgsConstructor
 @RequestMapping("crud/user")
 public class UserCrud {
-    private List<UserResp> users;
     private final UserMapper mapper;
     private final UserService service;
+    private final int SIZE = 10;
 
     @GetMapping
     public String getMethodName(@ModelAttribute("user") UserResp user) {
@@ -44,7 +50,7 @@ public class UserCrud {
                 models.addAttribute("message", "Thanh cong");
                 return "redirect:/crud/user";
             } catch (Exception e) {
-                e.printStackTrace(); 
+                e.printStackTrace();
             }
         }
         models.addAttribute("message", "That bai");
@@ -73,9 +79,24 @@ public class UserCrud {
     }
 
     @ModelAttribute("users")
-    public List<UserResp> getUsers() {
-        users = service.getAllUsers().stream().map(mapper::toUserResp).toList();
-        return users;
+    public Page<UserResp> getUsers(@RequestParam(required = false, defaultValue = "0") int pages) {
+        Pageable pageable = PageRequest.of(pages, SIZE);
+
+        // Fetch the Page of User entities
+        Page<User> userPage = service.getAllUsers(pageable);
+
+        // Map the User entities to UserResp DTOs and collect to a List
+        List<UserResp> userRespList = userPage.getContent().stream()
+                .map(mapper::toUserResp)
+                .collect(Collectors.toList());
+
+        // Create a new PageImpl of UserResp
+        Page<UserResp> userRespPage = new PageImpl<>(userRespList, pageable, userPage.getTotalElements());
+        return userRespPage;
+        // Pageable pageable = PageRequest.of(pages, SIZE);
+        // Page<UserResp>users = (Page<UserResp>)
+        // service.getAllUsers(pageable).getContent().stream().map(mapper::toUserResp).collect(Collectors.toList());
+        // return users;
     }
 
     @ModelAttribute
@@ -84,6 +105,7 @@ public class UserCrud {
             throw new UnAuthorizationException("Access denied");
         }
     }
+
     @ModelAttribute("page")
     public String getPage() {
         return "user";

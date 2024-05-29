@@ -27,7 +27,7 @@
                         </div>
                         <div class="col-md-12">
                             <label for="role" class="form-label">Role</label>
-                            <form:select path="role" items="${roles}" id="role" class="form-select"/>
+                            <form:select path="role" items="${roles}" id="role" class="form-select" />
                         </div>
                         <div class="col-md-12 text-center">
                             <button type="submit" class="btn btn-primary mt-3">Submit</button>
@@ -54,7 +54,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <c:forEach var="user" items="${users}">
+                            <c:forEach var="user" items="${users.content}">
                                 <tr>
                                     <th scope="row">
                                         <c:out value="${user.id}" />
@@ -79,6 +79,23 @@
                             </c:forEach>
                         </tbody>
                     </table>
+                    <ul class="pagination">
+                        <li class="page-item">
+                            <a class="page-link" href="/crud/user" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <c:forEach var="page" begin="0" end="${users.totalPages-1}">
+                            <li class="page-item"><a class="page-link ${users.number==page?'active':''}"
+                                    href="/crud/user?pages=${page}">${page+1}</a>
+                            </li>
+                        </c:forEach>
+                        <li class="page-item">
+                            <a class="page-link" href="/crud/user?pages=${users.totalPages-1}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
