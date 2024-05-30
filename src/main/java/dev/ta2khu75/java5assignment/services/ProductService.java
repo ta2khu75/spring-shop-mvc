@@ -8,14 +8,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import dev.ta2khu75.java5assignment.models.Category;
 import dev.ta2khu75.java5assignment.models.Product;
 
 public interface ProductService {
     public void deleteProduct(Long id);
-    public Product getProductById(Long id) throws JsonProcessingException, ClassNotFoundException;
+    public Product getProductById(Long id) throws JsonProcessingException;
     public Product updateProduct(Product product, MultipartFile image) throws IOException;
     public Product createProduct(Product product, MultipartFile image) throws IOException;
     public Page<Product> getAllProducts(Pageable pageable) throws JsonProcessingException;
@@ -23,4 +22,14 @@ public interface ProductService {
     public Page<Product> getProductNameByKeyword(Pageable pageable,String keyword);
     public Page<Product> getProductByCategory(Pageable pageable, Category category);
     public List<Product> getProductByKeywordAndCategory(String keyword);
+    
+    public Page<Product> getProductByKeywordAndPriceGreater(Pageable pageable, String keyword, Long minPrice);
+    public Page<Product> getProductByKeywordAndPriceLess(Pageable pageable, String keyword, Long maxPrice);
+    public Page<Product> getProductByKeywordAndPriceBetween(Pageable pageable, String keyword, Long minPrice, Long maxPrice);
+    
+    public Page<Product> getProductByCategoryAndPriceGreater(Pageable pageable, String keyword, Long minPrice);
+    public Page<Product> getProductByCategoryAndPriceLess(Pageable pageable, String keyword, Long maxPrice);
+    public Page<Product> getProductByCategoryAndPriceBetween(Pageable pageable, String keyword, Long minPrice, Long maxPrice);
+
+    
 }

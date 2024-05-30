@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import dev.ta2khu75.java5assignment.dtoes.UserDto;
+import dev.ta2khu75.java5assignment.exceptions.AlreadyExistsException;
 import dev.ta2khu75.java5assignment.exceptions.NotFoundException;
 import dev.ta2khu75.java5assignment.mappers.UserMapper;
 import dev.ta2khu75.java5assignment.models.User;
@@ -22,13 +23,12 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
     private final UserMapper mapper;
-    // private final PasswordEncoder passwordEncoder;
 
     @Override
     public User login(String email, String password) {
         User user = repository.findByEmail(email);
 
-        if(user!=null && !user.isLocked() && BCrypt.verifyer().verify(password.toCharArray(), user.getPassword()).verified) {
+        if(user!=null && BCrypt.verifyer().verify(password.toCharArray(), user.getPassword()).verified) {
             return user;
         }
         return null;
@@ -60,14 +60,21 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public User createUser(UserDto userDto) {
-        User user = mapper.toUser(userDto);
+        User user=repository.findByEmail(userDto.getEmail());
+        if (user!=null){
+            throw new AlreadyExistsException("User already exists");
+        }
+        user = mapper.toUser(userDto);
         user.setPassword(BCrypt.withDefaults().hashToString(12, user.getPassword().toCharArray()));
         return repository.save(user);
     }
     @Override
     public User updateUser(User user) {
-        // user.setPassword(BCrypt.withDef?aults().hashToString(12, user.getPassword().toCharArray()));
         return repository.save(user);
+    }
+    @Override
+    public boolean isExistUserById(Long id) {
+        return repository.existsById(id);
     }
 
 }

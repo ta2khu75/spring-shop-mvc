@@ -15,5 +15,6 @@ public interface UserService {
     public User getUserByUserResp(UserResp userResp);
     public User createUser(UserDto userDto);
     public User updateUser(User user);
+    public boolean isExistUserById(Long id);
     
 }

@@ -38,4 +38,9 @@ public class OrderDetailsServiceImpl implements OrderDetailsService {
         return repository.countProduct();
     }
 
+    @Override
+    public List<Object[]> sumPriceGroupByCateogry() {
+        return repository.sumPriceGroupByCategory();
+    }
+
 }

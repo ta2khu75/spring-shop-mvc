@@ -24,20 +24,20 @@
         <div class="col-xl-8 col-lg-8 mb-4">
           <!-- Checkout -->
           <div class="card shadow-0 border">
-            <form:form modelAttribute="order" enctype="multipart/form-data" method="post" action="/order" class="p-4">
+            <form:form modelAttribute="order" method="post" action="/order" class="p-4">
               <h5 class="card-title mb-3">Guest checkout</h5>
               <div class="row">
                 <div class="col-6 mb-3">
                   <p class="mb-0">Full Name</p>
                   <form:input type="text" path="fullName" id="typeText" placeholder="Type here" class="form-control" />
-                  <form:errors path="fullName" />
+                  <form:errors class="text-danger" path="fullName" />
                   <div class="form-outline">
                   </div>
                 </div>
                 <div class="col-6 mb-3">
                   <p class="mb-0">Phone</p>
                   <form:input type="tel" path="phoneNumber" id="typePhone" placeholder="+84" class="form-control" />
-                  <form:errors path="phoneNumber" />
+                  <form:errors class="text-danger" path="phoneNumber" />
                 </div>
               </div>
               <hr class="my-4" />
@@ -47,7 +47,7 @@
                 <div class="col-sm-12 mb-3">
                   <p class="mb-0">Address</p>
                   <form:textarea path="address" class="form-control" id="textAreaExample" rows="4" /><br>
-                  <form:errors path="address" />
+                  <form:errors class="text-danger" path="address" />
                 </div>
               </div>
               <div class="d-flex flex-row pb-3">
@@ -82,8 +82,9 @@
                   </p>
                 </div>
               </div>
+              <form:errors  path="paymentMethod" class="text-danger" />
               <div class="float-end mt-4">
-                <button class="btn btn-light border" type="reset">Cancel</button>
+                <a class="btn btn-light border" href="/checkout">Cancel</a>
                 <button class="btn btn-success shadow-0 border" type="submit">Continue</button>
               </div>
             </form:form>

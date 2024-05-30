@@ -41,8 +41,10 @@ public class Admin {
 
     @GetMapping("admin/seo")
     public String getMethodNae(Model model) throws JsonProcessingException {
-        List<Object[]> list =orderDetailsService.countProduct();
-        model.addAttribute("data", objectMapper.writeValueAsString(list));
+        List<Object[]> countProduct =orderDetailsService.countProduct();
+        model.addAttribute("product", objectMapper.writeValueAsString(countProduct));
+        List<Object[]> sumCategory =orderDetailsService.sumPriceGroupByCateogry();
+        model.addAttribute("category", objectMapper.writeValueAsString(sumCategory));
         model.addAttribute("page", "seo");
         return "crud/admin";
     }

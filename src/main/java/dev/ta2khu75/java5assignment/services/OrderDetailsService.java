@@ -9,4 +9,5 @@ public interface OrderDetailsService {
     OrderDetails createOrderDetails(Order orderId, Long productId, Integer quantity);
     List<OrderDetails> getOrderDetailsByOrderId(Long orderId);
     List<Object[]> countProduct();
+    List<Object[]> sumPriceGroupByCateogry();
 }

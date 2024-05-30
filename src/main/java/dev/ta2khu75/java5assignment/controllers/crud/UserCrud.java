@@ -34,42 +34,58 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class UserCrud {
     private final UserMapper mapper;
     private final UserService service;
-    private final int SIZE = 10;
+    private final int SIZE = 1;
 
     @GetMapping
-    public String getMethodName(@ModelAttribute("user") UserResp user) {
+    public String getMethodName(@ModelAttribute("user") UserResp user,
+            @RequestParam(required = false) boolean errorNotExist,
+            @RequestParam(required = false) boolean errorDelete,
+            @RequestParam(required = false) boolean successUpdate,
+            @RequestParam(required = false) boolean successDelete, Model model) {
+        model.addAttribute("errorDelete", errorDelete);
+        model.addAttribute("errorNotExist", errorNotExist);
+        model.addAttribute("successUpdate", successUpdate);
+        model.addAttribute("successDelete", successDelete);
         return "crud/admin";
     }
 
     @PostMapping
-    public String postMethodName(Model models, @Valid @ModelAttribute("user") UserResp user,
+    public String postMethodName(Model models, @RequestParam int pages, @Valid @ModelAttribute("user") UserResp user,
             BindingResult bindingResult) {
         if (!bindingResult.hasErrors()) {
             try {
                 service.updateUserResp(user);
-                models.addAttribute("message", "Thanh cong");
-                return "redirect:/crud/user";
+                return "redirect:/crud/user?successUpdate=true&pages=" + pages;
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        models.addAttribute("message", "That bai");
-        return "redirect:/crud/user";
+        models.addAttribute("pages", pages);
+        models.addAttribute("errorValid", true);
+        return "crud/admin";
     }
 
-    @GetMapping("delete/{id}")
-    public String deleteMethod(@PathVariable Long id, @ModelAttribute User user) {
-        service.deleteUser(id);
-        return "redirect:/crud/user";
+    @GetMapping("delete")
+    public String deleteMethod(@RequestParam Long id, @RequestParam int pages) {
+        try {
+            service.deleteUser(id);
+            return "redirect:/crud/user?successDelete=true&pages="+pages;
+        } catch (Exception e) {
+            return "redirect:/crud/user?errorDelete=true&pages="+pages;
+        }
     }
 
     @GetMapping("{id}")
-    public String getMethodName(@PathVariable Long id, Model model) {
+    public String getMethodName(@PathVariable Long id, Model model, @RequestParam int pages) {
         User userExisting = service.getUserById(id);
         if (userExisting != null) {
             UserResp userResp = mapper.toUserResp(userExisting);
             model.addAttribute("user", userResp);
+        } else {
+            model.addAttribute("user", new UserResp());
+            model.addAttribute("errorNotExist", true);
         }
+        model.addAttribute("pages", pages);
         return "crud/admin";
     }
 
@@ -79,7 +95,7 @@ public class UserCrud {
     }
 
     @ModelAttribute("users")
-    public Page<UserResp> getUsers(@RequestParam(required = false, defaultValue = "0") int pages) {
+    public Page<UserResp> getUsers(@RequestParam(required = false, defaultValue = "0") int pages, Model model) {
         Pageable pageable = PageRequest.of(pages, SIZE);
 
         // Fetch the Page of User entities
@@ -92,11 +108,8 @@ public class UserCrud {
 
         // Create a new PageImpl of UserResp
         Page<UserResp> userRespPage = new PageImpl<>(userRespList, pageable, userPage.getTotalElements());
+        model.addAttribute("pages",pages);
         return userRespPage;
-        // Pageable pageable = PageRequest.of(pages, SIZE);
-        // Page<UserResp>users = (Page<UserResp>)
-        // service.getAllUsers(pageable).getContent().stream().map(mapper::toUserResp).collect(Collectors.toList());
-        // return users;
     }
 
     @ModelAttribute

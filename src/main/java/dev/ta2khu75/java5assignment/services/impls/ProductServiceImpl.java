@@ -38,34 +38,28 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product getProductById(Long id) throws JsonProcessingException, ClassNotFoundException {
-        Product productt = redisService.get("product" + id, Product.class);
-        if (productt != null) {
-            return productt;
+    public Product getProductById(Long id) throws JsonProcessingException {
+        Product product = redisService.get("product" + id, Product.class);
+        if (product != null) {
+            return product;
         }
         String key = "product" + id;
-        Product product = repository.findById(id).orElseThrow(() -> new NotFoundException("Product not found"));
-        redisService.save(key, product);
+        product = repository.findById(id).orElseThrow(() -> new NotFoundException("Product not found"));
+        if (product != null)
+            redisService.save(key, product);
         return product;
     }
 
     @Override
     public Product updateProduct(Product product, MultipartFile image) throws IOException {
-        Product productExisting = repository.findById(product.getId())
+        repository.findById(product.getId())
                 .orElseThrow(() -> new NotFoundException("Product not found"));
         if (image != null && !image.isEmpty()) {
             String imageUrl = azureStorageService.writeBlobFile(ContainerEnviroment.PRODUCT, image);
             product.setImageUrl(String.format("https://java5assignment.blob.core.windows.net/%s/%s",
                     ContainerEnviroment.PRODUCT, imageUrl));
         }
-        productExisting.setName(product.getName());
-        productExisting.setActive(product.isActive());
-        productExisting.setPrice(product.getPrice());
-        productExisting.setDescription(product.getDescription());
-        productExisting.setNumberOfSales(product.getNumberOfSales());
-        productExisting.setQuantity(product.getQuantity());
-        productExisting.setCategory(product.getCategory());
-        return repository.save(productExisting);
+        return repository.save(product);
     }
 
     @Override
@@ -77,15 +71,17 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<Product> getAllProducts(Pageable pageable) throws JsonProcessingException{
-        int page=pageable.getPageNumber();
+    public Page<Product> getAllProducts(Pageable pageable) throws JsonProcessingException {
+        int page = pageable.getPageNumber();
         int size = pageable.getPageSize();
-        Page<Product> products = null;//(Page<Product>) redisService.getPage(String.format("all_product_size%d_page%d",size,page), Product.class);
+        Page<Product> products = null;// (Page<Product>)
+                                      // redisService.getPage(String.format("all_product_size%d_page%d",size,page),
+                                      // Product.class);
         if (products != null) {
             return products;
         }
         Page<Product> productList = repository.findAll(pageable);
-        redisService.savePage(String.format("all_product_size%d_page%d",size,page), productList);
+        redisService.savePage(String.format("all_product_size%d_page%d", size, page), productList);
         return productList;
     }
 
@@ -114,8 +110,48 @@ public class ProductServiceImpl implements ProductService {
         if (products != null) {
             return products;
         }
-        Page<Product> productList = repository.findByActiveTrue(pageable);
+        Page<Product> productList = repository.findByActiveTrueOrderByCreateDateDesc(pageable);
         redisService.savePage(String.format("product_%d_%d", page, size), productList);
         return productList;
+    }
+
+    @Override
+    public Page<Product> getProductByKeywordAndPriceGreater(Pageable pageable, String keyword, Long minPrice) {
+        return repository.findByPriceGreaterThanEqualAndNameContainingAndActiveTrueOrderByNumberOfSalesDesc(pageable,
+                minPrice, keyword);
+    }
+
+    @Override
+    public Page<Product> getProductByKeywordAndPriceLess(Pageable pageable, String keyword, Long maxPrice) {
+        return repository.findByPriceLessThanEqualAndNameContainingAndActiveTrueOrderByNumberOfSalesDesc(pageable,
+                maxPrice, keyword);
+    }
+
+    @Override
+    public Page<Product> getProductByKeywordAndPriceBetween(Pageable pageable, String keyword, Long minPrice,
+            Long maxPrice) {
+        return repository.findByPriceBetweenAndNameContainingAndActiveTrueOrderByNumberOfSalesDesc(pageable, minPrice,
+                maxPrice, keyword);
+    }
+
+    @Override
+    public Page<Product> getProductByCategoryAndPriceGreater(Pageable pageable, String keyword, Long minPrice) {
+        return repository.findByPriceGreaterThanEqualAndCategoryAndActiveTrueOrderByNumberOfSalesDesc(pageable,
+                minPrice,
+                Category.valueOf(keyword));
+    }
+
+    @Override
+    public Page<Product> getProductByCategoryAndPriceLess(Pageable pageable, String keyword, Long maxPrice) {
+        return repository.findByPriceLessThanEqualAndCategoryAndActiveTrueOrderByNumberOfSalesDesc(pageable, maxPrice,
+                Category.valueOf(keyword));
+    }
+
+    @Override
+    public Page<Product> getProductByCategoryAndPriceBetween(Pageable pageable, String keyword, Long minPrice,
+            Long maxPrice) {
+        return repository.findByPriceBetweenAndCategoryAndActiveTrueOrderByNumberOfSalesDesc(pageable, minPrice,
+                maxPrice, Category
+                        .valueOf(keyword));
     }
 }

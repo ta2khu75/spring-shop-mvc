@@ -1,7 +1,6 @@
 package dev.ta2khu75.java5assignment.controllers.crud;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import dev.ta2khu75.java5assignment.exceptions.UnAuthorizationException;
 import dev.ta2khu75.java5assignment.models.Category;
@@ -40,53 +38,76 @@ public class ProductCrud {
     private final int SIZE = 10;
 
     @GetMapping
-    public String getMethodName(@ModelAttribute Product product) {
+    public String getMethodName(@ModelAttribute Product product, @RequestParam(required = false) boolean errorCreate,
+            @RequestParam(required = false) boolean errorUpdate, @RequestParam(required = false) boolean errorDelete,
+            @RequestParam(required = false) boolean successCreate,
+            @RequestParam(required = false) boolean successDelete,
+            @RequestParam(required = false) boolean successUpdate,
+            Model model) {
+        model.addAttribute("errorCreate", errorCreate);
+        model.addAttribute("errorUpdate", errorUpdate);
+        model.addAttribute("errorDelete", errorDelete);
+        model.addAttribute("successCreate", successCreate);
+        model.addAttribute("successDelete", successDelete);
+        model.addAttribute("successUpdate", successUpdate);
         return "crud/admin";
     }
 
     @PostMapping
-    public String postMethodName(Model model, @RequestParam MultipartFile image, @Valid @ModelAttribute Product product,
+    public String postMethodName(@RequestParam int pages, Model model, @RequestParam MultipartFile image,
+            @Valid @ModelAttribute Product product,
             BindingResult bindingResult) {
         if (!bindingResult.hasErrors()) {
             if (product.getId() == null) {
                 if (!image.isEmpty()) {
                     try {
                         service.createProduct(product, image);
-                        return "redirect:/crud/product";
+                        return "redirect:/crud/product?successCreate=true&pages=" + pages;
                     } catch (IOException e) {
                         e.printStackTrace();
-                        model.addAttribute("message", "Create failed");
+                        model.addAttribute("errorCreate", true);
                     }
                 } else {
-                    model.addAttribute("message", "You must upload an image");
+                    model.addAttribute("errorNotImage", true);
                 }
             } else {
                 try {
-                    System.out.println("update");
-                    System.out.println(product.getQuantity());
                     service.updateProduct(product, image);
-                    return "redirect:/crud/product";
+                    return "redirect:/crud/product?successUpdate=true&pages=" + pages;
                 } catch (Exception e) {
                     e.printStackTrace();
+                    model.addAttribute("errorUpdate", true);
                 }
             }
+        } else {
+            model.addAttribute("errorValid", true);
         }
-        return "crud/product";
-    }
-
-    @GetMapping("{id}")
-    public String getMethodName(@PathVariable Long id, Model model)
-            throws JsonProcessingException, ClassNotFoundException {
-        Product product = service.getProductById(id);
-        model.addAttribute("product", product);
+        model.addAttribute("pages", pages);
         return "crud/admin";
-
     }
 
-    @GetMapping("delete/{id}")
-    public String getMethodName(@PathVariable Long id) {
-        service.deleteProduct(id);
-        return "redirect:/crud/product";
+    @GetMapping("edit")
+    public String getMethodName(@RequestParam Long id, Model model)
+            throws JsonProcessingException {
+        try {
+            Product product = service.getProductById(id);
+            model.addAttribute("product", product);
+        } catch (Exception e) {
+            model.addAttribute("errorNotExist", true);
+            model.addAttribute("product", new Product());
+        }
+        return "crud/admin";
+    }
+
+    @GetMapping("delete")
+    public String getMethodName(@RequestParam Long id, @RequestParam(required = false) int pages) {
+        try {
+            service.deleteProduct(id);
+            return "redirect:/crud/product?successDelete=true&pages=" + pages;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/crud/product?errorDelete=true&pages=" + pages;
+        }
     }
 
     @GetMapping("view/{id}")
@@ -96,12 +117,12 @@ public class ProductCrud {
         model.addAttribute("product", product);
         model.addAttribute("page", "product-details");
         return "crud/admin";
-    }   
+    }
 
     @ModelAttribute("products")
     public Page<Product> getProducts(@RequestParam(required = false) Optional<Integer> pages, Model model)
             throws JsonProcessingException {
-        model.addAttribute("pages", pages.orElse(null));
+        model.addAttribute("pages", pages.orElse(0));
         Pageable pageable = PageRequest.of(pages.orElse(0), SIZE);
         return service.getAllProducts(pageable);
     }

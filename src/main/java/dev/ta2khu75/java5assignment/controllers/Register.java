@@ -7,8 +7,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import dev.ta2khu75.java5assignment.dtoes.UserDto;
+import dev.ta2khu75.java5assignment.exceptions.AlreadyExistsException;
 import dev.ta2khu75.java5assignment.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +32,14 @@ public class Register {
     }
 
     @ModelAttribute("page")
-    public String getPage() {
+    public String getPage(@RequestParam(required = false) boolean errorValid,
+            @RequestParam(required = false) boolean errorEmail, @RequestParam(required = false) boolean errorPassword,
+            @RequestParam(required = false) boolean success, Model model) {
+        model.addAttribute("errorValid", errorValid);
+        model.addAttribute("errorEmail", errorEmail);
+        System.out.println(errorEmail);
+        model.addAttribute("errorPassword", errorPassword);
+        model.addAttribute("success", success);
         return "register";
     }
 
@@ -39,18 +48,18 @@ public class Register {
             BindingResult bindingResult) {
         if (!bindingResult.hasErrors()) {
             if (!userDto.getPassword().equals(userDto.getConfirmPassword())) {
-                model.addAttribute(MESSAGE, "Password not match confirm password");
+                model.addAttribute("errorPassword", true);
                 return "index";
             }
             try {
                 service.createUser(userDto);
-                model.addAttribute(MESSAGE, "Register success");
+                return "redirect:/register?success=true";
+            } catch (AlreadyExistsException e) {
+                model.addAttribute("errorEmail", true);
                 return "index";
-            } catch (DataIntegrityViolationException e) {
-                e.printStackTrace();
-                model.addAttribute(MESSAGE, "Email is existing");
             }
         }
+        model.addAttribute("errorValid", true);
         return "index";
     }
 

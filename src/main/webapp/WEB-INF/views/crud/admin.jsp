@@ -262,6 +262,9 @@
                                                 <c:when test="${page.equals('seo')}">
                                                     <%@ include file="seo.jsp" %>
                                                 </c:when>
+                                                <c:when test="${page.equals('order-details')}">
+                                                    <%@ include file="orderDetails.jsp" %>
+                                                </c:when>
                                                 <c:otherwise>
                                                     <%@ include file="dashboard.jsp" %>
                                                 </c:otherwise>

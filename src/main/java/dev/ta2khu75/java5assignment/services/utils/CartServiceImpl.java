@@ -34,7 +34,11 @@ public class CartServiceImpl implements CartService {
         if (cart.containsKey(userId)) {
             Map<Long, Integer> map = cart.get(userId);
             map.remove(productId);
-            cart.put(userId, map);
+            if (map.size() == 0) {
+                cart.remove(userId);
+            } else {
+                cart.put(userId, map);
+            }
         }
     }
 
@@ -69,7 +73,11 @@ public class CartServiceImpl implements CartService {
             Map<Long, Integer> map = cart.get(userId);
             if (map.get(productId) == 1) {
                 map.remove(productId);
-                cart.put(userId, map);
+                if (map.size() == 0) {
+                    cart.remove(userId);
+                } else {
+                    cart.put(userId, map);
+                }
                 return;
             }
             map.put(productId, map.get(productId) - 1);

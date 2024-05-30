@@ -4,9 +4,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import dev.ta2khu75.java5assignment.dtoes.UserLogin;
 import dev.ta2khu75.java5assignment.mappers.UserMapper;
+import dev.ta2khu75.java5assignment.models.Role;
 import dev.ta2khu75.java5assignment.models.User;
 import dev.ta2khu75.java5assignment.services.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -31,7 +33,10 @@ public class Login {
     }
 
     @ModelAttribute("page")
-    public String getPage() {
+    public String getPage(@RequestParam(required = false) boolean errorValid,
+            @RequestParam(required = false) boolean errorLogin, Model model) {
+        model.addAttribute("errorValid", errorValid);
+        model.addAttribute("errorLogin", errorLogin);
         return "login";
     }
 
@@ -42,11 +47,20 @@ public class Login {
         if (!bindingResult.hasErrors()) {
             User result = service.login(user.getEmail(), user.getPassword());
             if (result != null) {
+                if(result.isLocked()){
+                    model.addAttribute("errorLocked", true);
+                    return "index";
+                }
                 session.setAttribute("user", mapper.toUserResp(result));
+                if (result.getRole().equals(Role.ADMIN)) {
+                    return "redirect:/admin";
+                }
                 return "redirect:/";
             }
+            model.addAttribute("errorLogin", true);
+            return "index";
         }
-        model.addAttribute("message", "Email or password incorrect");
+        model.addAttribute("errorValid", true);
         return "index";
     }
 

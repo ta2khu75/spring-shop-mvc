@@ -57,8 +57,7 @@
                                 </h2>
                                 <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse show"
                                     aria-labelledby="headingThree">
-                                    <form class="accordion-body" action="/list-product?type=${type}&keyword=${keyword}"
-                                        method="get">
+                                    <form class="accordion-body" action="/list-product" method="get">
                                         <input type="text" name="type" hidden value="${type}">
                                         <input type="text" name="keyword" hidden value="${keyword}">
                                         <div class="row mb-3">
@@ -99,7 +98,6 @@
                 <!-- content -->
                 <div class="col-lg-9">
                     <header class="d-sm-flex align-items-center border-bottom mb-4 pb-3">
-                        <strong class="d-block py-2"> ${size} Items found </strong>
                         <div class="ms-auto">
                             <select class="form-select d-inline-block w-auto border pt-1">
                                 <option value="0">Best match</option>
@@ -126,7 +124,79 @@
                     <div class="tab-content" id="ex1-content">
                         <div class="tab-pane fade show active" id="ex1-tabs-1" role="tabpanel"
                             aria-labelledby="ex1-tab-1">
-                            <c:if test="${products!=null}">
+                            <c:if test="${size==0}">
+                               <%@ include file="notFoundProduct.jsp" %> 
+                            </c:if>
+                            <c:forEach var="product" items="${products.content}">
+                                <c:set var="discount" value="${product.price}" />
+                                <fmt:formatNumber value="${discount}" type="currency" currencySymbol="₫"
+                                    groupingUsed="true" var="formattedAmount" />
+                                <c:set var="price" value="${product.price+50000}" />
+                                <fmt:formatNumber value="${price}" type="currency" currencySymbol="₫"
+                                    groupingUsed="true" var="formattedPrice" />
+                                <div class="row justify-content-center mb-3">
+                                    <div class="col-md-12">
+                                        <div class="card shadow-0 border rounded-3">
+                                            <div class="card-body">
+                                                <div class="row g-0">
+                                                    <div class="col-xl-3 col-md-4 d-flex justify-content-center">
+                                                        <div
+                                                            class="bg-image hover-zoom ripple rounded ripple-surface me-md-3 mb-3 mb-md-0">
+                                                            <img src="${product.imageUrl}" class="w-100" />
+                                                            <a href="/product-details/${product.id}">
+                                                                <div class="hover-overlay">
+                                                                    <div class="mask"
+                                                                        style="background-color: rgba(253, 253, 253, 0.15);">
+                                                                    </div>
+                                                                </div>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xl-6 col-md-5 col-sm-7">
+                                                        <h5>${product.name}</h5>
+                                                        <div class="d-flex flex-row">
+                                                            <div class="text-warning mb-1 me-2">
+                                                                <i class="fa fa-star"></i>
+                                                                <i class="fa fa-star"></i>
+                                                                <i class="fa fa-star"></i>
+                                                                <i class="fa fa-star"></i>
+                                                                <i class="fas fa-star-half-alt"></i>
+                                                                <span class="ms-1">
+                                                                    4.5
+                                                                </span>
+                                                            </div>
+                                                            <span class="text-muted">${product.numberOfSales}
+                                                                orders</span>
+                                                        </div>
+
+                                                        <p class="text mb-4 mb-md-0">
+                                                            ${product.description}
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-xl-3 col-md-3 col-sm-5">
+                                                        <div class="d-flex flex-row align-items-center mb-1">
+                                                            <h4 class="mb-1 me-1">${formattedAmount}
+                                                            </h4>
+                                                            <span class="text-danger"><s>${formattedPrice}</s></span>
+                                                        </div>
+                                                        <h6 class="text-success">Free shipping</h6>
+                                                        <div class="mt-4">
+                                                            <button class="btn btn-primary shadow-0" type="button">Buy
+                                                                this</button>
+                                                            <a href="#!"
+                                                                class="btn btn-light border px-2 pt-2 icon-hover"><i
+                                                                    class="fas fa-heart fa-lg px-1"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </c:forEach>
+                        </div>
+                        <div class="tab-pane fade" id="ex1-tabs-2" role="tabpanel" aria-labelledby="ex1-tab-2">
+                            <div class="row">
                                 <c:forEach var="product" items="${products.content}">
                                     <c:set var="discount" value="${product.price}" />
                                     <fmt:formatNumber value="${discount}" type="currency" currencySymbol="₫"
@@ -134,104 +204,27 @@
                                     <c:set var="price" value="${product.price+50000}" />
                                     <fmt:formatNumber value="${price}" type="currency" currencySymbol="₫"
                                         groupingUsed="true" var="formattedPrice" />
-                                    <div class="row justify-content-center mb-3">
-                                        <div class="col-md-12">
-                                            <div class="card shadow-0 border rounded-3">
-                                                <div class="card-body">
-                                                    <div class="row g-0">
-                                                        <div class="col-xl-3 col-md-4 d-flex justify-content-center">
-                                                            <div
-                                                                class="bg-image hover-zoom ripple rounded ripple-surface me-md-3 mb-3 mb-md-0">
-                                                                <img src="${product.imageUrl}" class="w-100" />
-                                                                <a href="/product-details/${product.id}">
-                                                                    <div class="hover-overlay">
-                                                                        <div class="mask"
-                                                                            style="background-color: rgba(253, 253, 253, 0.15);">
-                                                                        </div>
-                                                                    </div>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-xl-6 col-md-5 col-sm-7">
-                                                            <h5>${product.name}</h5>
-                                                            <div class="d-flex flex-row">
-                                                                <div class="text-warning mb-1 me-2">
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fas fa-star-half-alt"></i>
-                                                                    <span class="ms-1">
-                                                                        4.5
-                                                                    </span>
-                                                                </div>
-                                                                <span class="text-muted">${product.numberOfSales}
-                                                                    orders</span>
-                                                            </div>
-
-                                                            <p class="text mb-4 mb-md-0">
-                                                                ${product.description}
-                                                            </p>
-                                                        </div>
-                                                        <div class="col-xl-3 col-md-3 col-sm-5">
-                                                            <div class="d-flex flex-row align-items-center mb-1">
-                                                                <h4 class="mb-1 me-1">${formattedAmount}
-                                                                </h4>
-                                                                <span
-                                                                    class="text-danger"><s>${formattedPrice}</s></span>
-                                                            </div>
-                                                            <h6 class="text-success">Free shipping</h6>
-                                                            <div class="mt-4">
-                                                                <button class="btn btn-primary shadow-0"
-                                                                    type="button">Buy
-                                                                    this</button>
-                                                                <a href="#!"
-                                                                    class="btn btn-light border px-2 pt-2 icon-hover"><i
-                                                                        class="fas fa-heart fa-lg px-1"></i></a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                    <div class="col-lg-4 col-md-6 col-sm-6 d-flex">
+                                        <div class="card w-100 my-2 shadow-2-strong">
+                                            <a href="/product-details/${product.id}">
+                                                <img src="${product.imageUrl}" class="card-img-top" />
+                                            </a>
+                                            <div class="card-body d-flex flex-column">
+                                                <div class="d-flex flex-row">
+                                                    <h5 class="mb-1 me-1">${formattedAmount}</h5>
+                                                    <span class="text-danger"><s>${formattedPrice}</s></span>
+                                                </div>
+                                                <p class="card-text">${product.name}</p>
+                                                <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
+                                                    <a href="#!" class="btn btn-primary shadow-0 me-1">Add
+                                                        to cart</a>
+                                                    <a href="#!" class="btn btn-light border icon-hover px-2 pt-2"><i
+                                                            class="fas fa-heart fa-lg text-secondary px-1"></i></a>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </c:forEach>
-                            </c:if>
-                        </div>
-                        <div class="tab-pane fade" id="ex1-tabs-2" role="tabpanel" aria-labelledby="ex1-tab-2">
-                            <div class="row">
-                                <c:if test="${products!=null}">
-                                    <c:forEach var="product" items="${products.content}">
-                                        <c:set var="discount" value="${product.price}" />
-                                        <fmt:formatNumber value="${discount}" type="currency" currencySymbol="₫"
-                                            groupingUsed="true" var="formattedAmount" />
-                                        <c:set var="price" value="${product.price+50000}" />
-                                        <fmt:formatNumber value="${price}" type="currency" currencySymbol="₫"
-                                            groupingUsed="true" var="formattedPrice" />
-                                        <div class="col-lg-4 col-md-6 col-sm-6 d-flex">
-                                            <div class="card w-100 my-2 shadow-2-strong">
-                                                <a href="/product-details/${product.id}">
-                                                    <img src="${product.imageUrl}" class="card-img-top" />
-                                                </a>
-                                                <div class="card-body d-flex flex-column">
-                                                    <div class="d-flex flex-row">
-                                                        <h5 class="mb-1 me-1">${formattedAmount}</h5>
-                                                        <span class="text-danger"><s>${formattedPrice}</s></span>
-                                                    </div>
-                                                    <p class="card-text">${product.name}</p>
-                                                    <div
-                                                        class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                                                        <a href="#!" class="btn btn-primary shadow-0 me-1">Add
-                                                            to cart</a>
-                                                        <a href="#!"
-                                                            class="btn btn-light border icon-hover px-2 pt-2"><i
-                                                                class="fas fa-heart fa-lg text-secondary px-1"></i></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </c:forEach>
-                                </c:if>
                             </div>
                         </div>
                     </div>
@@ -241,18 +234,21 @@
                     <nav aria-label="Page navigation example" class="d-flex justify-content-center mt-3">
                         <ul class="pagination">
                             <li class="page-item">
-                                <a class="page-link" href="/list-product?type=${type}&keyword=${keyword}"
+                                <a class="page-link"
+                                    href="/list-product?type=${type}&keyword=${keyword}&min=${min}&max=${max}"
                                     aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
                             </li>
-                            <c:forEach var="page" begin="0" end="${products.totalPages-1}">
+                            <c:forEach var="page" begin="0" end="${products.totalPages-1<0?0:products.totalPages-1}">
                                 <li class="page-item"><a class="page-link ${products.number==page?'active':''}"
-                                        href="/list-product?type=${type}&keyword=${keyword}&page=${page}">${page+1}</a>
+                                        href="/list-product?type=${type}&keyword=${keyword}&page=${page}&min=${min}&max=${max}">
+                                        ${page+1} </a>
                                 </li>
                             </c:forEach>
                             <li class="page-item">
-                                <a class="page-link" href="/list-product?page=${products.totalPages-1}"
+                                <a class="page-link"
+                                    href="/list-product?page=${products.totalPages-1}&min=${min}&max=${max}"
                                     aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                 </a>

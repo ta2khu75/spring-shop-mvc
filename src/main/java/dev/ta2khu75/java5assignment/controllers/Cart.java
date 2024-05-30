@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,7 +41,7 @@ public class Cart {
     }
 
     @ModelAttribute("carts")
-    public Map<Product, Integer> getCarts(@SessionAttribute("user") UserResp user) throws JsonProcessingException, ClassNotFoundException {
+    public Map<Product, Integer> getCarts(@SessionAttribute("user") UserResp user, Model model) throws JsonProcessingException, ClassNotFoundException {
         Map<Long, Integer> map = service.getCart(user.getId());
         Map<Product, Integer> cart = new LinkedHashMap<>();
         if (map == null) {
@@ -50,6 +51,7 @@ public class Cart {
             Product product = productService.getProductById(entry.getKey());
             cart.put(product, entry.getValue());
         }
+        // model.addAttribute("size", cart.size());
         return cart;
     }
 

@@ -65,7 +65,8 @@ public class Checkout {
     public String postMethodName(@SessionAttribute("user") UserResp user, Model model, @Valid @ModelAttribute Order order,
             BindingResult bindingResult) throws IOException, ClassNotFoundException {
         if (bindingResult.hasErrors()) {
-            return "checkout";
+            // System.out.println("have error>>>>>>>>>>>>>>>>>>>>>>>");
+            return "index";
         }
         long amount = 0;
         order = orderService.createOrder(user.getId(), order);
