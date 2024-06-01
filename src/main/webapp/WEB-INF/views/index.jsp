@@ -71,7 +71,9 @@
                   <!-- Right elements -->
                   <div class="col-lg-5 col-md-12 col-12">
                     <form class="input-group float-center" action="/list-product" method="get">
-                      <input type="text" name="type" hidden value="keyword">
+                      <input type="hidden" type="text" value="${category}" name="category">
+                      <input type="hidden" type="text" value="${min}" name="min">
+                      <input type="hidden" type="text" value="${max}" name="max">
                       <div class="form-outline">
                         <input type="search" id="form1" name="keyword" value="${keyword}" class="form-control" />
                         <c:if test="${keyword==null}">

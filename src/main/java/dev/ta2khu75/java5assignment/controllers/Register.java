@@ -1,6 +1,5 @@
 package dev.ta2khu75.java5assignment.controllers;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -37,7 +36,6 @@ public class Register {
             @RequestParam(required = false) boolean success, Model model) {
         model.addAttribute("errorValid", errorValid);
         model.addAttribute("errorEmail", errorEmail);
-        System.out.println(errorEmail);
         model.addAttribute("errorPassword", errorPassword);
         model.addAttribute("success", success);
         return "register";

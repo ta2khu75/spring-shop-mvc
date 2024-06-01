@@ -39,11 +39,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product getProductById(Long id) throws JsonProcessingException {
-        Product product = redisService.get("product" + id, Product.class);
+        String key = "product" + id;
+        Product product = redisService.get(key, Product.class);
         if (product != null) {
             return product;
         }
-        String key = "product" + id;
         product = repository.findById(id).orElseThrow(() -> new NotFoundException("Product not found"));
         if (product != null)
             redisService.save(key, product);
@@ -72,16 +72,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<Product> getAllProducts(Pageable pageable) throws JsonProcessingException {
-        int page = pageable.getPageNumber();
-        int size = pageable.getPageSize();
-        Page<Product> products = null;// (Page<Product>)
-                                      // redisService.getPage(String.format("all_product_size%d_page%d",size,page),
-                                      // Product.class);
-        if (products != null) {
-            return products;
-        }
         Page<Product> productList = repository.findAll(pageable);
-        redisService.savePage(String.format("all_product_size%d_page%d", size, page), productList);
         return productList;
     }
 
@@ -102,56 +93,19 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<Product> getAllProductsActiveTrue(Pageable pageable) throws JsonProcessingException {
-        int page = pageable.getPageNumber();
-        int size = pageable.getPageSize();
-
-        Page<Product> products = (Page<Product>) redisService
-                .getPage(String.format("product_page%d_size%d", page, size), Product.class);
-        if (products != null) {
-            return products;
-        }
         Page<Product> productList = repository.findByActiveTrueOrderByCreateDateDesc(pageable);
-        redisService.savePage(String.format("product_%d_%d", page, size), productList);
         return productList;
     }
 
     @Override
-    public Page<Product> getProductByKeywordAndPriceGreater(Pageable pageable, String keyword, Long minPrice) {
-        return repository.findByPriceGreaterThanEqualAndNameContainingAndActiveTrueOrderByNumberOfSalesDesc(pageable,
-                minPrice, keyword);
+    public Page<Product> searchProductPage(String keyword, Category category, Long min, Long max, Pageable pageable) {
+        return repository.searchProduct(keyword, category, min, max, pageable);
     }
 
     @Override
-    public Page<Product> getProductByKeywordAndPriceLess(Pageable pageable, String keyword, Long maxPrice) {
-        return repository.findByPriceLessThanEqualAndNameContainingAndActiveTrueOrderByNumberOfSalesDesc(pageable,
-                maxPrice, keyword);
+    public List<Product> getProductRecommendList(Category category, Long productId, Pageable pageable) {
+        return repository.findTop4ByCategoryAndActiveTrueAndIdNotEqualOrderByNumberOfSalesDesc(category, productId,
+                pageable);
     }
 
-    @Override
-    public Page<Product> getProductByKeywordAndPriceBetween(Pageable pageable, String keyword, Long minPrice,
-            Long maxPrice) {
-        return repository.findByPriceBetweenAndNameContainingAndActiveTrueOrderByNumberOfSalesDesc(pageable, minPrice,
-                maxPrice, keyword);
-    }
-
-    @Override
-    public Page<Product> getProductByCategoryAndPriceGreater(Pageable pageable, String keyword, Long minPrice) {
-        return repository.findByPriceGreaterThanEqualAndCategoryAndActiveTrueOrderByNumberOfSalesDesc(pageable,
-                minPrice,
-                Category.valueOf(keyword));
-    }
-
-    @Override
-    public Page<Product> getProductByCategoryAndPriceLess(Pageable pageable, String keyword, Long maxPrice) {
-        return repository.findByPriceLessThanEqualAndCategoryAndActiveTrueOrderByNumberOfSalesDesc(pageable, maxPrice,
-                Category.valueOf(keyword));
-    }
-
-    @Override
-    public Page<Product> getProductByCategoryAndPriceBetween(Pageable pageable, String keyword, Long minPrice,
-            Long maxPrice) {
-        return repository.findByPriceBetweenAndCategoryAndActiveTrueOrderByNumberOfSalesDesc(pageable, minPrice,
-                maxPrice, Category
-                        .valueOf(keyword));
-    }
 }

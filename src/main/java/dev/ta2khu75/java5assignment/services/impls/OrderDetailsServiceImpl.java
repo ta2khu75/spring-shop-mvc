@@ -4,12 +4,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import dev.ta2khu75.java5assignment.exceptions.NotFoundException;
 import dev.ta2khu75.java5assignment.models.Order;
 import dev.ta2khu75.java5assignment.models.OrderDetails;
 import dev.ta2khu75.java5assignment.models.Product;
 import dev.ta2khu75.java5assignment.repositories.OrderDetailsRepository;
-import dev.ta2khu75.java5assignment.repositories.ProductRepository;
 import dev.ta2khu75.java5assignment.services.OrderDetailsService;
 import lombok.RequiredArgsConstructor;
 
@@ -17,10 +15,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OrderDetailsServiceImpl implements OrderDetailsService {
     private final OrderDetailsRepository repository;
-    private final ProductRepository productRepository;
     @Override
-    public OrderDetails createOrderDetails(Order order, Long productId, Integer quantity) {
-        Product product=productRepository.findById(productId).orElseThrow(()->new NotFoundException("Product not found"));
+    public OrderDetails createOrderDetails(Order order, Product product, Integer quantity) {
         OrderDetails orderDetails=new OrderDetails();
         orderDetails.setOrder(order);
         orderDetails.setProduct(product);

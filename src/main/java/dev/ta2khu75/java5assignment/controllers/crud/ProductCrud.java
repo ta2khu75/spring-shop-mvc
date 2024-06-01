@@ -11,16 +11,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import dev.ta2khu75.java5assignment.exceptions.UnAuthorizationException;
 import dev.ta2khu75.java5assignment.models.Category;
 import dev.ta2khu75.java5assignment.models.Product;
-import dev.ta2khu75.java5assignment.models.Role;
-import dev.ta2khu75.java5assignment.resps.UserResp;
 import dev.ta2khu75.java5assignment.services.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -112,7 +108,7 @@ public class ProductCrud {
 
     @GetMapping("view/{id}")
     public String getMethodView(@PathVariable Long id, Model model)
-            throws IOException, ClassNotFoundException {
+            throws IOException{
         Product product = service.getProductById(id);
         model.addAttribute("product", product);
         model.addAttribute("page", "product-details");
@@ -130,13 +126,6 @@ public class ProductCrud {
     @ModelAttribute("categories")
     public Category[] getCategories() {
         return Category.values();
-    }
-
-    @ModelAttribute
-    public void getAuthorization(@SessionAttribute("user") UserResp userResp) {
-        if (userResp == null || !userResp.getRole().equals(Role.ADMIN)) {
-            throw new UnAuthorizationException("Access denied");
-        }
     }
 
     @ModelAttribute("page")

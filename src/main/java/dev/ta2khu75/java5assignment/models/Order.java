@@ -29,13 +29,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-@Entity
-@Data
+@Data @Entity
 @Table(name = "orders")
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners(value={AuditingEntityListener.class})
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

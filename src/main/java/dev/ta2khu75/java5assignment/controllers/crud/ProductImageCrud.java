@@ -7,13 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
-import dev.ta2khu75.java5assignment.exceptions.UnAuthorizationException;
 import dev.ta2khu75.java5assignment.models.ProductImage;
-import dev.ta2khu75.java5assignment.models.Role;
-import dev.ta2khu75.java5assignment.resps.UserResp;
 import dev.ta2khu75.java5assignment.services.ProductImageService;
 import dev.ta2khu75.java5assignment.services.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +27,7 @@ public class ProductImageCrud {
     private final ProductImageService service;
 
     @GetMapping
-    public String getMethodName(@PathVariable Long productId, Model model) throws IOException, ClassNotFoundException {
+    public String getMethodName(@PathVariable Long productId, Model model) throws IOException{
         model.addAttribute("product", productService.getProductById(productId));
         return "crud/admin";
     }
@@ -66,12 +62,6 @@ public class ProductImageCrud {
         return service.getAllProductImagesByProductId(productId);
     }
 
-    @ModelAttribute
-    public void getAuthorization(@SessionAttribute("user") UserResp userResp) {
-        if (userResp == null || !userResp.getRole().equals(Role.ADMIN)) {
-            throw new UnAuthorizationException("Access denied");
-        }
-    }
     @ModelAttribute("page")
     public String getPage(){
         return "product-details";

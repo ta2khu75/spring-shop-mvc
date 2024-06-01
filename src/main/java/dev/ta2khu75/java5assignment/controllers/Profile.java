@@ -3,6 +3,7 @@ package dev.ta2khu75.java5assignment.controllers;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,8 +49,15 @@ public class Profile {
     }
 
     @ModelAttribute("order")
-    public Order getOrder(@SessionAttribute("user") UserResp user) {
-        return service.findTopByUserIdOrderByIdDesc(user.getId());
+    public Order getOrder(@SessionAttribute("user") UserResp user, Model model) {
+        Order order = service.findTopByUserIdOrderByIdDesc(user.getId());
+        if (order != null) {
+            Status status = order.getStatus();
+            if (status.equals(Status.PENDING) || status.equals(Status.PROCESSING)) {
+                model.addAttribute("cancel", true);
+            }
+        }
+        return order;
     }
 
     @ModelAttribute("newOrders")

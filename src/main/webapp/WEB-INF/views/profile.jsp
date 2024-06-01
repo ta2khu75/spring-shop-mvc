@@ -124,14 +124,16 @@
                                                 <small>Date: ${order.createDate}</small>
                                             </div>
                                             <div>
-                                                <form:form action="/order/cancel?id=${order.id}" method="get"
-                                                    style="display: inline">
-                                                    <input type="hidden" name="id" value="${order.id}" />
-                                                    <button type="submit" class="btn btn-danger btn-sm"
-                                                        onclick="return confirm('Are you sure you want to cancel this order?');">
-                                                        Cancel order
-                                                    </button>
-                                                </form:form>
+                                                <c:if test="${cancel}">
+                                                    <form:form action="/order/cancel?id=${order.id}" method="get"
+                                                        style="display: inline">
+                                                        <input type="hidden" name="id" value="${order.id}" />
+                                                        <button type="submit" class="btn btn-danger btn-sm"
+                                                            onclick="return confirm('Are you sure you want to cancel this order?');">
+                                                            Cancel order
+                                                        </button>
+                                                    </form:form>
+                                                </c:if>
                                                 <a href="/order/track?id=${order.id}"
                                                     class="btn btn-primary btn-sm">Track
                                                     Order</a>

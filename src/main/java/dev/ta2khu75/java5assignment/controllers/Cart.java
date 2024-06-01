@@ -28,7 +28,7 @@ public class Cart {
     private final ProductService productService;
 
     @ModelAttribute("total")
-    public long getTotal(@SessionAttribute("user") UserResp user) throws JsonProcessingException, ClassNotFoundException {
+    public long getTotal(@SessionAttribute("user") UserResp user) throws JsonProcessingException{
         long total = 0;
         Map<Long, Integer> map = service.getCart(user.getId());
         if (map == null) {
@@ -51,7 +51,6 @@ public class Cart {
             Product product = productService.getProductById(entry.getKey());
             cart.put(product, entry.getValue());
         }
-        // model.addAttribute("size", cart.size());
         return cart;
     }
 

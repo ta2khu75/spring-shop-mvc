@@ -7,6 +7,11 @@
       </div>
       <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
         <h2 class="mb-4">Log in</h2>
+        <c:if test="${error!=null}">
+          <div class="alert alert-danger" role="alert">
+            ${error}
+          </div>
+        </c:if>
         <c:if test="${errorLogin}">
           <div class="alert alert-danger" role="alert">
             Email or password is incorrect

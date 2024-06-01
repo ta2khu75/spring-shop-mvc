@@ -22,14 +22,6 @@ public interface ProductService {
     public Page<Product> getProductNameByKeyword(Pageable pageable,String keyword);
     public Page<Product> getProductByCategory(Pageable pageable, Category category);
     public List<Product> getProductByKeywordAndCategory(String keyword);
-    
-    public Page<Product> getProductByKeywordAndPriceGreater(Pageable pageable, String keyword, Long minPrice);
-    public Page<Product> getProductByKeywordAndPriceLess(Pageable pageable, String keyword, Long maxPrice);
-    public Page<Product> getProductByKeywordAndPriceBetween(Pageable pageable, String keyword, Long minPrice, Long maxPrice);
-    
-    public Page<Product> getProductByCategoryAndPriceGreater(Pageable pageable, String keyword, Long minPrice);
-    public Page<Product> getProductByCategoryAndPriceLess(Pageable pageable, String keyword, Long maxPrice);
-    public Page<Product> getProductByCategoryAndPriceBetween(Pageable pageable, String keyword, Long minPrice, Long maxPrice);
-
-    
+    public Page<Product> searchProductPage(String keyword,Category category, Long min, Long max, Pageable pageable);
+    public List<Product> getProductRecommendList(Category category, Long productId, Pageable pageable);
 }

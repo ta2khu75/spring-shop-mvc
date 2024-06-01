@@ -33,10 +33,12 @@ public class Login {
     }
 
     @ModelAttribute("page")
-    public String getPage(@RequestParam(required = false) boolean errorValid,
+    public String getPage(@RequestParam(required = false) boolean errorValid,@RequestParam(required = false) String error,
             @RequestParam(required = false) boolean errorLogin, Model model) {
         model.addAttribute("errorValid", errorValid);
         model.addAttribute("errorLogin", errorLogin);
+        model.addAttribute("error", error);
+        System.out.println(error);
         return "login";
     }
 

@@ -66,7 +66,7 @@
                     <div class="col-lg-3">
                         <nav class="nav flex-column nav-pills mb-md-2">
                             <c:forEach var="category" items="${categories}">
-                                <a href="/list-product?type=category&keyword=${category}" class="nav-link my-0 py-2 ps-3 bg-white" href="#">
+                                <a href="/list-product?category=${category}" class="nav-link my-0 py-2 ps-3 bg-white" href="#">
                                     <c:out value="${category}" />
                                 </a>
                             </c:forEach>

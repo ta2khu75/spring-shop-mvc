@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttribute;
 
-import dev.ta2khu75.java5assignment.exceptions.UnAuthorizationException;
 import dev.ta2khu75.java5assignment.mappers.UserMapper;
 import dev.ta2khu75.java5assignment.models.Role;
 import dev.ta2khu75.java5assignment.models.User;
@@ -110,13 +108,6 @@ public class UserCrud {
         Page<UserResp> userRespPage = new PageImpl<>(userRespList, pageable, userPage.getTotalElements());
         model.addAttribute("pages",pages);
         return userRespPage;
-    }
-
-    @ModelAttribute
-    public void getAuthorization(@SessionAttribute("user") UserResp userResp) {
-        if (userResp == null || !userResp.getRole().equals(Role.ADMIN)) {
-            throw new UnAuthorizationException("Access denied");
-        }
     }
 
     @ModelAttribute("page")

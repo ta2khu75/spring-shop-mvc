@@ -1,7 +1,9 @@
 package dev.ta2khu75.java5assignment.controllers;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
@@ -19,9 +21,11 @@ import dev.ta2khu75.java5assignment.models.PaymentMethod;
 import dev.ta2khu75.java5assignment.models.Product;
 import dev.ta2khu75.java5assignment.resps.UserResp;
 import dev.ta2khu75.java5assignment.services.CartService;
+import dev.ta2khu75.java5assignment.services.MailerService;
 import dev.ta2khu75.java5assignment.services.OrderDetailsService;
 import dev.ta2khu75.java5assignment.services.OrderService;
 import dev.ta2khu75.java5assignment.services.ProductService;
+import dev.ta2khu75.java5assignment.services.TelegramService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,9 +37,12 @@ public class Checkout {
     private final CartService service;
     private final OrderService orderService;
     private final OrderDetailsService orderDetailsService;
+    private final TelegramService telegramService;
+    private final MailerService mailerService;
 
     @RequestMapping("checkout")
-    public String requestMethodName(@SessionAttribute("user") UserResp user, @ModelAttribute Order order, Model model) throws JsonProcessingException, ClassNotFoundException {
+    public String requestMethodName(@SessionAttribute("user") UserResp user, @ModelAttribute Order order, Model model)
+            throws JsonProcessingException{
         Map<Long, Integer> map = service.getCart(user.getId());
         if (map == null) {
             return "redirect:/";
@@ -49,7 +56,8 @@ public class Checkout {
     }
 
     @ModelAttribute("total")
-    public long getTotal(@SessionAttribute("user") UserResp user) throws JsonProcessingException, ClassNotFoundException {
+    public long getTotal(@SessionAttribute("user") UserResp user)
+            throws JsonProcessingException{
         long total = 0;
         Map<Long, Integer> map = service.getCart(user.getId());
         if (map == null) {
@@ -62,29 +70,34 @@ public class Checkout {
     }
 
     @PostMapping("order")
-    public String postMethodName(@SessionAttribute("user") UserResp user, Model model, @Valid @ModelAttribute Order order,
-            BindingResult bindingResult) throws IOException, ClassNotFoundException {
+    public String postMethodName(@SessionAttribute("user") UserResp user, Model model,
+            @Valid @ModelAttribute Order order,
+            BindingResult bindingResult) throws IOException{
         if (bindingResult.hasErrors()) {
-            // System.out.println("have error>>>>>>>>>>>>>>>>>>>>>>>");
             return "index";
         }
         long amount = 0;
         order = orderService.createOrder(user.getId(), order);
         Map<Long, Integer> map = service.getCart(user.getId());
+        List<OrderDetails> orderDetailsList = new ArrayList<>();
         for (Map.Entry<Long, Integer> entry : map.entrySet()) {
-            OrderDetails orderDetails = orderDetailsService.createOrderDetails(order, entry.getKey(), entry.getValue());
             Product product = productService.getProductById(entry.getKey());
-            product.setNumberOfSales(product.getNumberOfSales()+orderDetails.getQuantity());
+            OrderDetails orderDetails = orderDetailsService.createOrderDetails(order, product, entry.getValue());
+            orderDetailsList.add(orderDetails);
+            //tinh tong tien order
+            product.setNumberOfSales(product.getNumberOfSales() + orderDetails.getQuantity());
             product.setQuantity(product.getQuantity() - orderDetails.getQuantity());
-            if(product.getQuantity()<=0){
+            if (product.getQuantity() <= 0) {
                 product.setActive(false);
             }
             productService.updateProduct(product, null);
             amount += orderDetails.getProduct().getPrice() * orderDetails.getQuantity();
         }
         order.setTotal(amount);
-        orderService.updateOrder(order);
+        order = orderService.updateOrder(order);
         service.clearCart(user.getId());
+        telegramService.addToQueue(orderDetailsList);
+        addToEmail(orderDetailsList, order);
         if (order.getPaymentMethod().equals(PaymentMethod.COD)) {
             model.addAttribute("page", "success");
             return "index";
@@ -92,8 +105,27 @@ public class Checkout {
             return String.format("redirect:/payment/%d?amount=%d", order.getId(), amount);
         }
     }
+
     @ModelAttribute("page")
     public String page() {
         return "checkout";
+    }
+
+    private void addToEmail(List<OrderDetails> list, Order order) {
+        if (list == null || list.isEmpty()) {
+            return;
+        }
+        StringBuilder body = new StringBuilder(
+                "<table border=\"2px\" style=\"width: 100%\"><thead><tr><th>Name</th><th>image</th><th>Quantity</th><th>Price</th><th>Total</th></tr></thead><tbody>");
+        for (OrderDetails orderDetails : list) {
+            Product product = orderDetails.getProduct();
+            body.append(String.format(
+                    "<tr><td align=\"center\">%s</td><td align=\"center\"><img width=\"150px\" src=\"%s\"</td><td align=\"center\">%d</td><td align=\"center\">%d</td></tr></tr>",
+                    product.getName(), product.getImageUrl(), orderDetails.getQuantity(), product.getPrice()));
+        }
+        body.append(" </tbody></table>");
+        body.append("<br><h3>Total: " + order.getTotal() + "</h3>");
+        mailerService.queue(order.getUser().getEmail(),
+                String.format("Shop Tàu khựa đã nhận đơn hàng %d của bạn", order.getId()), body.toString());
     }
 }

@@ -13,17 +13,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import dev.ta2khu75.java5assignment.exceptions.UnAuthorizationException;
 import dev.ta2khu75.java5assignment.models.Order;
 import dev.ta2khu75.java5assignment.models.PaymentMethod;
-import dev.ta2khu75.java5assignment.models.Role;
 import dev.ta2khu75.java5assignment.models.Status;
-import dev.ta2khu75.java5assignment.resps.UserResp;
 import dev.ta2khu75.java5assignment.services.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttribute;
 
 @Controller
 @RequestMapping("crud/order")
@@ -99,13 +95,6 @@ public class OrderCrud {
             return "redirect:/crud/order?successDelete=true&pages=" + pages;
         } catch (Exception e) {
             return "redirect:/crud/order?errorDelete=true&pages=" + pages;
-        }
-    }
-
-    @ModelAttribute
-    public void getAuthorization(@SessionAttribute("user") UserResp userResp) {
-        if (userResp == null || !userResp.getRole().equals(Role.ADMIN)) {
-            throw new UnAuthorizationException("Access denied");
         }
     }
 
