@@ -25,6 +25,11 @@
                                     Register Successfully
                                 </div>
                             </c:if>
+                            <c:if test="${errorCaptcha}">
+                                <div class="alert alert-danger" role="alert">
+                                    Captcha code incorrect
+                                </div>
+                            </c:if>
                             <c:if test="${errorEmail}">
                                 <div class="alert alert-danger" role="alert">
                                     Email exists already.
@@ -65,7 +70,18 @@
                                     <label class="form-label" for="form3Example4">Confirm password</label>
                                 </div>
                                 <form:errors class="text-danger" path="confirmPassword" />
-
+                                <div class="row mt-4">
+                                    <div class="col-md-6">
+                                        <div data-mdb-input-init class="form-outline">
+                                            <input type="text" name="captcha" id="form3Example1m"
+                                                class="form-control form-control-lg" />
+                                            <label class="form-label" for="form3Example1m">Captcha code</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                            <img src="${captcha}" alt="">
+                                    </div>
+                                </div>
                                 <!-- Checkbox -->
                                 <div class="form-check d-flex justify-content-center my-4">
                                     <input class="form-check-input me-2" type="checkbox" value="" id="form2Example33"

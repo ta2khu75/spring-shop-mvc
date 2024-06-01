@@ -12,6 +12,11 @@
             ${error}
           </div>
         </c:if>
+        <c:if test="${errorCaptcha}">
+          <div class="alert alert-danger" role="alert">
+            Captcha code incorrect
+          </div>
+        </c:if>
         <c:if test="${errorLogin}">
           <div class="alert alert-danger" role="alert">
             Email or password is incorrect
@@ -41,15 +46,26 @@
             <label class="form-label" for="form1Example23">Password</label>
           </div>
           <form:errors class="text-danger" path="password" />
-
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <div data-mdb-input-init class="form-outline">
+                <input type="text" name="captcha" id="form3Example1m" class="form-control form-control-lg" />
+                <label class="form-label" for="form3Example1m">Captcha code</label>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <img src="${captcha}" alt="">
+            </div>
+          </div>
           <div class="d-flex justify-content-around align-items-center my-4">
             <!-- Checkbox -->
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="" id="form1Example3" checked />
+              <input class="form-check-input" type="checkbox" value="true" id="form1Example3" name="remember" />
               <label class="form-check-label" for="form1Example3"> Remember me </label>
             </div>
             <a href="#!">Forgot password?</a>
           </div>
+
 
           <!-- Submit button -->
           <button type="submit" class="btn btn-primary btn-lg btn-block">Sign in</button>

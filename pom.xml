@@ -82,25 +82,17 @@
 			<artifactId>mapstruct</artifactId>
 			<version>${org.mapstruct.version}</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.11.0</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/me.paulschwarz/spring-dotenv -->
-		<dependency>
-			<groupId>me.paulschwarz</groupId>
-			<artifactId>spring-dotenv</artifactId>
-			<version>3.0.0</version>
-		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/at.favre.lib/bcrypt -->
-		<!-- https://mvnrepository.com/artifact/me.paulschwarz/spring-dotenv -->
 		<dependency>
 			<groupId>at.favre.lib</groupId>
 			<artifactId>bcrypt</artifactId>
 			<version>0.10.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/cn.hutool/hutool-captcha -->
+		<dependency>
+			<groupId>cn.hutool</groupId>
+			<artifactId>hutool-captcha</artifactId>
+			<version>5.8.28</version>
 		</dependency>
 		<dependency>
 			<groupId>org.telegram</groupId>
@@ -149,6 +141,11 @@
 					<source>1.8</source>					<!-- depending on your project -->
 					<target>1.8</target>					<!-- depending on your project -->
 					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</path>
 						<path>
 							<groupId>org.mapstruct</groupId>
 							<artifactId>mapstruct-processor</artifactId>

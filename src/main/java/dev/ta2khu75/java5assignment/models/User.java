@@ -1,7 +1,6 @@
 package dev.ta2khu75.java5assignment.models;
 
 import java.util.List;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,6 +13,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity @Data
@@ -28,6 +28,7 @@ public class User {
     private boolean locked;
     @Enumerated(EnumType.STRING)
     private Role role=Role.USER;
+    @ToString.Exclude
     @OneToMany(mappedBy = "user")
     private List<Order> orders;
 }

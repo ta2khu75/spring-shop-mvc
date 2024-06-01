@@ -1,11 +1,9 @@
 package dev.ta2khu75.java5assignment.services.impls;
 
-import java.util.List;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-// import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import dev.ta2khu75.java5assignment.dtoes.UserDto;
@@ -27,12 +25,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public User login(String email, String password) {
         User user = repository.findByEmail(email);
-
-        if(user!=null && BCrypt.verifyer().verify(password.toCharArray(), user.getPassword()).verified) {
+        if (user != null && BCrypt.verifyer().verify(password.toCharArray(), user.getPassword()).verified) {
             return user;
         }
         return null;
     }
+
     @Override
     public Page<User> getAllUsers(Pageable pageable) {
         return repository.findAll(pageable);
@@ -54,24 +52,28 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long id) {
         repository.deleteById(id);
     }
+
     @Override
     public User getUserByUserResp(UserResp userResp) {
         return repository.findByEmail(userResp.getEmail());
     }
+
     @Override
     public User createUser(UserDto userDto) {
-        User user=repository.findByEmail(userDto.getEmail());
-        if (user!=null){
+        User user = repository.findByEmail(userDto.getEmail());
+        if (user != null) {
             throw new AlreadyExistsException("User already exists");
         }
         user = mapper.toUser(userDto);
         user.setPassword(BCrypt.withDefaults().hashToString(12, user.getPassword().toCharArray()));
         return repository.save(user);
     }
+
     @Override
     public User updateUser(User user) {
         return repository.save(user);
     }
+
     @Override
     public boolean isExistUserById(Long id) {
         return repository.existsById(id);

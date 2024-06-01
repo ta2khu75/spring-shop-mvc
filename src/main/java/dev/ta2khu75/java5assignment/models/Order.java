@@ -27,6 +27,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
 @Data @Entity
@@ -54,6 +55,7 @@ public class Order {
     PaymentMethod paymentMethod;
     @ManyToOne
     @JsonIgnore
+    @ToString.Exclude
     User user;
     @OneToMany(mappedBy = "order")
     List<OrderDetails> orderDetails;

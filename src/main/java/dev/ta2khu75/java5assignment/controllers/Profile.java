@@ -32,7 +32,8 @@ public class Profile {
     private final UserMapper mapper;
 
     @GetMapping("")
-    public String getMethodName() {
+    public String getMethodName(@RequestParam(required = false) String message, Model model) {
+        model.addAttribute("message", message);
         return "index";
     }
 
@@ -83,16 +84,17 @@ public class Profile {
     @PostMapping("change-password")
     public String postMethodName(@SessionAttribute("user") UserResp userResp, @RequestParam String oldPassword,
             @RequestParam String password, @RequestParam String confirmPassword) {
-        if (oldPassword.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
-            return "redirect:/profile?error=true";
-        }
         User user = userService.getUserById(userResp.getId());
-        if (user != null && user.getPassword().equals(oldPassword) && password.equals(confirmPassword)) {
-            user.setPassword(BCrypt.withDefaults().hashToString(12, password.toCharArray()));
-            userService.updateUser(user);
-            session.removeAttribute("user");
+        if (user != null && BCrypt.verifyer().verify(oldPassword.toCharArray(), user.getPassword()).verified) {
+            if (password.equals(confirmPassword)) {
+                user.setPassword(BCrypt.withDefaults().hashToString(12, password.toCharArray()));
+                userService.updateUser(user);
+                return "redirect:/profile?message=Change%20password%20success%20fully";
+            } else {
+                return "redirect:/profile?message=New%20password%20and%20confirm%20password%20not%20match";
+            }
         }
-        return "redirect:/profile";
+        return "redirect:/profile?message=Old%20password%20is%20incorrect";
     }
 
     @ModelAttribute("page")

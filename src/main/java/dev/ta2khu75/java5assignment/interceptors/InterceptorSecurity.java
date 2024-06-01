@@ -1,9 +1,7 @@
 package dev.ta2khu75.java5assignment.interceptors;
 
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
 
 import dev.ta2khu75.java5assignment.models.Role;
 import dev.ta2khu75.java5assignment.resps.UserResp;

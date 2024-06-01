@@ -111,6 +111,11 @@
                                     </div>
                                 </div>
                             </div>
+                            <c:if test="${message!=null}">
+                                <div class="alert alert-info" role="alert">
+                                    ${message}
+                                </div>
+                            </c:if>
                             <c:if test="${order!=null}">
                                 <c:set var="total" value="${order.total}" />
                                 <fmt:formatNumber value="${total}" type="currency" currencySymbol="₫"
