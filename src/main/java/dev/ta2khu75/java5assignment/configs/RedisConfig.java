@@ -3,6 +3,8 @@ package dev.ta2khu75.java5assignment.configs;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericToStringSerializer;
@@ -15,6 +17,19 @@ public class RedisConfig {
     LettuceConnectionFactory redisConnectionFactory() {
         return new LettuceConnectionFactory();
     }
+    // @Bean
+    // public LettuceConnectionFactory redisConnectionFactory() {
+    //     RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
+    //     redisStandaloneConfiguration.setHostName("singapore-redis.render.com");
+    //     redisStandaloneConfiguration.setPort(6379);
+    //     redisStandaloneConfiguration.setPassword("KPvQBrgiRlssqplocbNntlD6r1NNwk5f");
+
+    //     LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
+    //             .useSsl()
+    //             .build();
+
+    //     return new LettuceConnectionFactory(redisStandaloneConfiguration, clientConfig);
+    // }
     @Bean
     RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
